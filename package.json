@@ -11,7 +11,7 @@
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "postinstall": "npm run build"
   },
-  "author": "",
+  "author": "Ash Blue",
   "license": "MIT",
   "devDependencies": {
     "@types/del": "^4.0.0",
@@ -31,5 +31,20 @@
     "glob": "^7.1.4",
     "chalk": "^2.4.2",
     "inquirer": "^6.4.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashblue/oyster-package-generator.git"
+  },
+  "keywords": [
+    "unity",
+    "unity3d",
+    "upm",
+    "package generator",
+    "cli"
+  ],
+  "bugs": {
+    "url": "https://github.com/ashblue/oyster-package-generator/issues"
+  },
+  "homepage": "https://github.com/ashblue/oyster-package-generator#readme"
 }
