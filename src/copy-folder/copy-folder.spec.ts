@@ -1,6 +1,6 @@
-import {copyFolder} from './copy-folder';
-import * as fs from 'fs';
 import * as del from 'del';
+import * as fs from 'fs';
+import {copyFolder} from './copy-folder';
 
 describe('copyFolder', () => {
   const TMP_ASSETS = 'tmp/assets';
@@ -40,8 +40,8 @@ describe('copyFolder', () => {
       await copyFolder('tmp/{name}', 'tmp/dist/{name}', {
         replaceVariables: [
           {
+            value: 'LoremIpsum',
             variable: 'name',
-            value: 'LoremIpsum'
           },
         ],
       });
@@ -55,8 +55,8 @@ describe('copyFolder', () => {
       await copyFolder(TMP_ASSETS, DEST, {
         replaceVariables: [
           {
+            value: 'LoremIpsum',
             variable: 'name',
-            value: 'LoremIpsum'
           },
         ],
       });
@@ -70,8 +70,8 @@ describe('copyFolder', () => {
       await copyFolder(TMP_ASSETS, DEST, {
         replaceVariables: [
           {
-            variable: 'name',
             value: 'LoremIpsum',
+            variable: 'name',
           },
         ],
       });

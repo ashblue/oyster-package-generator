@@ -7,7 +7,12 @@
   },
   "rules": {
     "quotemark": [true, "single"],
-    "no-var-requires": false
+    "no-var-requires": false,
+    "variable-name": {
+      "options": [
+        "allow-leading-underscore"
+      ]
+    }
   },
   "rulesDirectory": []
 }
