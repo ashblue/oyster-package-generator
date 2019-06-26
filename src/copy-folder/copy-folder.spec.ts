@@ -45,6 +45,30 @@ describe('copyFolder', () => {
       expect(contents).toEqual('old');
     });
 
+    it('should never replace pre-existing files with variable injection', async () => {
+      const name = 'LoremIpsum';
+      const sourcePath = `${TMP_ASSETS}/{name}`;
+      const destPath = `${DEST}/${name}`;
+      const destFile = `${destPath}/file.txt`;
+
+      fs.mkdirSync(sourcePath, {recursive: true});
+      fs.mkdirSync(destPath, {recursive: true});
+      fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
+      fs.writeFileSync(destFile, 'old');
+
+      await copyFolder(TMP_ASSETS, DEST, {
+        replaceVariables: [
+          {
+            value: name,
+            variable: 'name',
+          },
+        ],
+      });
+      const contents = fs.readFileSync(destFile).toString();
+
+      expect(contents).toEqual('old');
+    });
+
     it('should return files that are skipped', async () => {
       fs.mkdirSync(DEST, {recursive: true});
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
@@ -53,6 +77,30 @@ describe('copyFolder', () => {
       const results = await copyFolder(TMP_ASSETS, DEST);
 
       expect(results.skippedFilePaths[0]).toEqual(`${DEST}/file.txt`);
+      expect(results.skippedFilePaths.length).toEqual(1);
+    });
+
+    it('should return files that are skipped with variable names', async () => {
+      const name = 'LoremIpsum';
+      const sourcePath = `${TMP_ASSETS}/{name}`;
+      const destPath = `${DEST}/${name}`;
+      const destFile = `${destPath}/file.txt`;
+
+      fs.mkdirSync(sourcePath, {recursive: true});
+      fs.mkdirSync(destPath, {recursive: true});
+      fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
+      fs.writeFileSync(destFile, 'old');
+
+      const results = await copyFolder(TMP_ASSETS, DEST, {
+        replaceVariables: [
+          {
+            value: name,
+            variable: 'name',
+          },
+        ],
+      });
+
+      expect(results.skippedFilePaths[0]).toEqual(destFile);
       expect(results.skippedFilePaths.length).toEqual(1);
     });
   });
