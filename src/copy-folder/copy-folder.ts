@@ -11,11 +11,14 @@ export interface ICopyFolderOptions {
   replaceVariables: IKeyValuePair[];
 }
 
-interface ICopyFolderResults {
+export interface ICopyFolderResults {
   skippedFilePaths: string[];
 }
 
-export type copyFolderType = (source: string, destination: string, options?: ICopyFolderOptions) => Promise<void>;
+export type copyFolderType = (
+  source: string,
+  destination: string,
+  options?: ICopyFolderOptions) => Promise<ICopyFolderResults>;
 
 function renameFileWithVariables(path: string, variables: IKeyValuePair[] | undefined): string {
   if (!path.includes('{') || !path.includes('}')) { return path; }
@@ -77,9 +80,15 @@ export async function copyFolder(
   destination: string,
   options: ICopyFolderOptions = {replaceVariables: []}): Promise<ICopyFolderResults> {
 
+  const skippedFilePaths = findPreExistingFiles(source, destination, options.replaceVariables);
+  if (skippedFilePaths.length > 0) {
+    return {
+      skippedFilePaths,
+    };
+  }
+
   fs.mkdirSync(destination, {recursive: true});
 
-  const skippedFilePaths = findPreExistingFiles(source, destination, options.replaceVariables);
   copyDir.sync(source, destination, {cover: false});
 
   const destinationPaths = glob.sync(`${destination}/**/*`);

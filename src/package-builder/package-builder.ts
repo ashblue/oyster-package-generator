@@ -1,4 +1,5 @@
-import {copyFolderType, ICopyFolderOptions, IKeyValuePair} from '../copy-folder/copy-folder';
+import chalk from 'chalk';
+import {copyFolderType, ICopyFolderOptions, ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
 import {Terminal} from '../terminal/terminal';
 
 export class PackageBuilder {
@@ -26,7 +27,34 @@ export class PackageBuilder {
     }
 
     const options: ICopyFolderOptions = {replaceVariables};
+    const copyFolderResults = await this._copyFolder(source, destination, options);
 
-    await this._copyFolder(source, destination, options);
+    this.printResultsMessage(copyFolderResults);
+  }
+
+  private printResultsMessage(copyFolderResults: ICopyFolderResults) {
+    if (copyFolderResults.skippedFilePaths.length > 0) {
+      // tslint:disable-next-line:no-console
+      console.log(chalk.redBright('Package generation aborted.'));
+
+      // tslint:disable-next-line:no-console
+      console.log(chalk.yellow('Files discovered with matching names.'));
+
+      // tslint:disable-next-line:no-console
+      console.log(
+        chalk.gray(
+          'Please delete listed files and rerun the command. ' +
+          'Make sure to backup files before deleting.',
+        ),
+      );
+
+      copyFolderResults.skippedFilePaths.forEach((f) => {
+        // tslint:disable-next-line:no-console
+        console.log(chalk.yellow(`- ${f}`));
+      });
+    } else {
+      // tslint:disable-next-line:no-console
+      console.log(chalk.green('Package generation complete'));
+    }
   }
 }

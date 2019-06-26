@@ -1,20 +1,27 @@
-import {ICopyFolderOptions, IKeyValuePair} from '../copy-folder/copy-folder';
-import {PackageBuilder} from './package-builder';
 import Mock = jest.Mock;
+import chalk from 'chalk';
+import {ICopyFolderOptions, ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
+import {PackageBuilder} from './package-builder';
 
 describe('PackageBuilder', () => {
   describe('Build method', () => {
+    let _consoleSpy: jest.SpyInstance;
     let _copyFolder: Mock;
+    let _terminal: any;
 
     beforeEach(() => {
-      _copyFolder = jest.fn();
+      _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      _copyFolder = jest.fn().mockImplementation(() => Promise.resolve({
+        skippedFilePaths: [],
+      } as ICopyFolderResults));
+
+      _terminal = {
+        askQuestions: jest.fn().mockImplementation(() => Promise.resolve({})),
+      };
     });
 
     it('should give the copy folder source as src/templates/Assets', async () => {
-      const terminal = {
-        askQuestions: jest.fn().mockImplementation(() => Promise.resolve({})),
-      } as any;
-      const packageBuilder = new PackageBuilder(_copyFolder, terminal);
+      const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
       const source = 'src/templates/assets';
 
       await packageBuilder.Build(source, '');
@@ -24,10 +31,7 @@ describe('PackageBuilder', () => {
     });
 
     it('should give the copyFolder destination of Assets', async () => {
-      const terminal = {
-        askQuestions: jest.fn().mockImplementation(() => Promise.resolve({})),
-      } as any;
-      const packageBuilder = new PackageBuilder(_copyFolder, terminal);
+      const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
       const destination = 'dist/Assets';
 
       await packageBuilder.Build('', destination);
@@ -54,15 +58,51 @@ describe('PackageBuilder', () => {
         return map;
       }, {});
 
-      const terminal = {
-        askQuestions: jest.fn().mockImplementation(() => Promise.resolve(answers)),
-      } as any;
-
-      const packageBuilder = new PackageBuilder(_copyFolder, terminal);
+      _terminal.askQuestions.mockImplementation(() => Promise.resolve(answers));
+      const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
       await packageBuilder.Build('', '');
 
       expect(_copyFolder.mock.calls[0][2])
         .toMatchObject(options);
+    });
+
+    describe('when discovering duplicate files', () => {
+      it('should print a message that duplicate files were found', async () => {
+        _copyFolder.mockImplementation(() => Promise.resolve({
+          skippedFilePaths: ['a'],
+        } as ICopyFolderResults));
+
+        const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
+        const source = 'src/templates/assets';
+
+        await packageBuilder.Build(source, '');
+
+        expect(_consoleSpy).toHaveBeenCalledWith(
+          chalk.yellow('Files discovered with matching names.'));
+      });
+
+      it('should print all duplicate files found', async () => {
+        _copyFolder.mockImplementation(() => Promise.resolve({
+          skippedFilePaths: ['a'],
+        } as ICopyFolderResults));
+
+        const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
+        const source = 'src/templates/assets';
+
+        await packageBuilder.Build(source, '');
+
+        expect(_consoleSpy).toHaveBeenCalledWith(chalk.yellow('- a'));
+      });
+
+      it('should print a success message if no duplicates were found', async () => {
+        const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
+        const source = 'src/templates/assets';
+
+        await packageBuilder.Build(source, '');
+
+        expect(_consoleSpy).toHaveBeenCalledWith(
+          chalk.green('Package generation complete'));
+      });
     });
   });
 });
