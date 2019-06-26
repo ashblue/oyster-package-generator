@@ -11,6 +11,10 @@ export interface ICopyFolderOptions {
   replaceVariables?: IKeyValuePair[];
 }
 
+interface ICopyFolderResults {
+  skippedFilePaths: string[];
+}
+
 export type copyFolderType = (source: string, destination: string, options?: ICopyFolderOptions) => Promise<void>;
 
 function renameFileWithVariables(path: string, variables: IKeyValuePair[] | undefined): string {
@@ -41,16 +45,37 @@ function replaceFileContents(path: string, variables: IKeyValuePair[] | undefine
   fs.writeFileSync(path, contents);
 }
 
-export async function copyFolder(source: string, destination: string, options: ICopyFolderOptions = {}) {
+function findPreExistingFiles(source: string, destination: string) {
+  const sourceFiles = glob.sync(`${source}/**/*`, {nodir: true})
+    .map((f) => f.replace(source, ''));
+  const destFiles = glob.sync(`${destination}/**/*`, {nodir: true});
+
+  const matches: string[] = [];
+  destFiles.forEach((f) => {
+    const path = f.replace(destination, '');
+    if (sourceFiles.includes(path)) {
+      matches.push(f);
+    }
+  });
+
+  return matches;
+}
+
+export async function copyFolder(
+  source: string,
+  destination: string,
+  options: ICopyFolderOptions = {}): Promise<ICopyFolderResults> {
+
   fs.mkdirSync(destination, {recursive: true});
 
-  copyDir.sync(source, destination, {});
+  const skippedFilePaths = findPreExistingFiles(source, destination);
+  copyDir.sync(source, destination, {cover: false});
 
-  const filePaths = glob.sync(`${destination}/**/*`);
-  filePaths.push(destination);
+  const destinationPaths = glob.sync(`${destination}/**/*`);
+  destinationPaths.push(destination);
 
   const replaceMatches: Array<{key: string, value: string}> = [];
-  filePaths.forEach((path) => {
+  destinationPaths.forEach((path) => {
 
     replaceMatches.forEach((match) => {
       if (path.includes(match.key)) {
@@ -65,4 +90,8 @@ export async function copyFolder(source: string, destination: string, options: I
 
     replaceFileContents(newPath, options.replaceVariables);
   });
+
+  return {
+    skippedFilePaths,
+  };
 }

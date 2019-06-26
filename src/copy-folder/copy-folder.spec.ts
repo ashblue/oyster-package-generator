@@ -33,6 +33,30 @@ describe('copyFolder', () => {
     expect(fs.existsSync(`${DEST}/Runtime`)).toBeTruthy();
   });
 
+  describe('file overwrite prevention', () => {
+    it('should never replace pre-existing files', async () => {
+      fs.mkdirSync(DEST, {recursive: true});
+      fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
+      fs.writeFileSync(`${DEST}/file.txt`, 'old');
+
+      await copyFolder(TMP_ASSETS, DEST);
+      const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
+
+      expect(contents).toEqual('old');
+    });
+
+    it('should return files that are skipped', async () => {
+      fs.mkdirSync(DEST, {recursive: true});
+      fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
+      fs.writeFileSync(`${DEST}/file.txt`, 'old');
+
+      const results = await copyFolder(TMP_ASSETS, DEST);
+
+      expect(results.skippedFilePaths[0]).toEqual(`${DEST}/file.txt`);
+      expect(results.skippedFilePaths.length).toEqual(1);
+    });
+  });
+
   describe('variable renaming', () => {
     it('should rename root folder with a given variable name', async () => {
       fs.mkdirSync('tmp/{name}');
