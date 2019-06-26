@@ -12,7 +12,10 @@ describe('copyFolder', () => {
   });
 
   it('should copy the folder to the appointed destination', async () => {
-    await copyFolder(TMP_ASSETS, DEST);
+    await copyFolder([{
+      destination: DEST,
+      source: TMP_ASSETS,
+    }]);
 
     expect(fs.existsSync(DEST)).toBeTruthy();
   });
@@ -20,7 +23,10 @@ describe('copyFolder', () => {
   it('should copy files', async () => {
     fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'lorem ipsum');
 
-    await copyFolder(TMP_ASSETS, DEST);
+    await copyFolder([{
+      destination: DEST,
+      source: TMP_ASSETS,
+    }]);
 
     expect(fs.existsSync(`${DEST}/file.txt`)).toBeTruthy();
   });
@@ -28,7 +34,10 @@ describe('copyFolder', () => {
   it('should copy folders', async () => {
     fs.mkdirSync(`${TMP_ASSETS}/Runtime`);
 
-    await copyFolder(TMP_ASSETS, DEST);
+    await copyFolder([{
+      destination: DEST,
+      source: TMP_ASSETS,
+    }]);
 
     expect(fs.existsSync(`${DEST}/Runtime`)).toBeTruthy();
   });
@@ -39,7 +48,10 @@ describe('copyFolder', () => {
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
       fs.writeFileSync(`${DEST}/file.txt`, 'old');
 
-      await copyFolder(TMP_ASSETS, DEST);
+      await copyFolder([{
+        destination: DEST,
+        source: TMP_ASSETS,
+      }]);
       const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
 
       expect(contents).toEqual('old');
@@ -56,14 +68,21 @@ describe('copyFolder', () => {
       fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
       fs.writeFileSync(destFile, 'old');
 
-      await copyFolder(TMP_ASSETS, DEST, {
-        replaceVariables: [
+      await copyFolder(
+        [
           {
-            value: name,
-            variable: 'name',
-          },
-        ],
-      });
+            destination: DEST,
+            source: TMP_ASSETS,
+          }],
+        {
+          replaceVariables: [
+            {
+              value: name,
+              variable: 'name',
+            },
+          ],
+        },
+      );
       const contents = fs.readFileSync(destFile).toString();
 
       expect(contents).toEqual('old');
@@ -74,7 +93,10 @@ describe('copyFolder', () => {
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
       fs.writeFileSync(`${DEST}/file.txt`, 'old');
 
-      const results = await copyFolder(TMP_ASSETS, DEST);
+      const results = await copyFolder([{
+        destination: DEST,
+        source: TMP_ASSETS,
+      }]);
 
       expect(results.skippedFilePaths[0]).toEqual(`${DEST}/file.txt`);
       expect(results.skippedFilePaths.length).toEqual(1);
@@ -91,14 +113,19 @@ describe('copyFolder', () => {
       fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
       fs.writeFileSync(destFile, 'old');
 
-      const results = await copyFolder(TMP_ASSETS, DEST, {
-        replaceVariables: [
-          {
-            value: name,
-            variable: 'name',
-          },
-        ],
-      });
+      const results = await copyFolder(
+        [{
+          destination: DEST,
+          source: TMP_ASSETS,
+        }],
+        {
+          replaceVariables: [
+            {
+              value: name,
+              variable: 'name',
+            },
+          ],
+        });
 
       expect(results.skippedFilePaths[0]).toEqual(destFile);
       expect(results.skippedFilePaths.length).toEqual(1);
@@ -109,14 +136,16 @@ describe('copyFolder', () => {
     it('should rename root folder with a given variable name', async () => {
       fs.mkdirSync('tmp/{name}');
 
-      await copyFolder('tmp/{name}', 'tmp/dist/{name}', {
-        replaceVariables: [
-          {
-            value: 'LoremIpsum',
-            variable: 'name',
-          },
-        ],
-      });
+      await copyFolder(
+        [{destination: 'tmp/dist/{name}', source: 'tmp/{name}'}],
+        {
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
 
       expect(fs.existsSync(`tmp/dist/LoremIpsum`)).toBeTruthy();
     });
@@ -124,7 +153,9 @@ describe('copyFolder', () => {
     it('should rename folders with a given variable name', async () => {
       fs.mkdirSync(`${TMP_ASSETS}/{name}`);
 
-      await copyFolder(TMP_ASSETS, DEST, {
+      await copyFolder(
+        [{destination: DEST, source: TMP_ASSETS}],
+        {
         replaceVariables: [
           {
             value: 'LoremIpsum',
@@ -140,14 +171,16 @@ describe('copyFolder', () => {
       fs.mkdirSync(`${TMP_ASSETS}/{name}`);
       fs.writeFileSync(`${TMP_ASSETS}/{name}/file.txt`, '{name}');
 
-      await copyFolder(TMP_ASSETS, DEST, {
-        replaceVariables: [
-          {
-            value: 'LoremIpsum',
-            variable: 'name',
-          },
-        ],
-      });
+      await copyFolder(
+        [{destination: DEST, source: TMP_ASSETS}],
+        {
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
 
       expect(fs.existsSync(`${DEST}/LoremIpsum`)).toBeTruthy();
     });
@@ -155,14 +188,16 @@ describe('copyFolder', () => {
     it('should replace a variable in any discovered text files', async () => {
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}');
 
-      await copyFolder(TMP_ASSETS, DEST, {
-        replaceVariables: [
-          {
-            value: 'LoremIpsum',
-            variable: 'name',
-          },
-        ],
-      });
+      await copyFolder(
+        [{destination: DEST, source: TMP_ASSETS}],
+        {
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
 
       const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
 
@@ -173,14 +208,16 @@ describe('copyFolder', () => {
       const nameValue = 'LoremIpsum';
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}{name}');
 
-      await copyFolder(TMP_ASSETS, DEST, {
-        replaceVariables: [
-          {
-            value: nameValue,
-            variable: 'name',
-          },
-        ],
-      });
+      await copyFolder(
+        [{destination: DEST, source: TMP_ASSETS}],
+        {
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
 
       const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
 

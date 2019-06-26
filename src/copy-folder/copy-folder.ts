@@ -15,6 +15,11 @@ export interface ICopyFolderResults {
   skippedFilePaths: string[];
 }
 
+export interface ICopyLocation {
+  destination: string;
+  source: string;
+}
+
 export type copyFolderType = (
   source: string,
   destination: string,
@@ -55,60 +60,63 @@ function replaceFileContents(path: string, variables: IKeyValuePair[] | undefine
   fs.writeFileSync(path, newText);
 }
 
-function findPreExistingFiles(source: string, destination: string, variables: IKeyValuePair[]) {
-  const sourceFiles = glob.sync(`${source}/**/*`, {nodir: true})
-    .map((f) => {
-      const partial = f.replace(source, '');
-      return replaceVariables(partial, variables);
-    });
-
-  const destFiles = glob.sync(`${destination}/**/*`, {nodir: true});
-
+function findPreExistingFiles(locations: ICopyLocation[], variables: IKeyValuePair[]) {
   const matches: string[] = [];
-  destFiles.forEach((f) => {
-    const path = f.replace(destination, '');
-    if (sourceFiles.includes(path)) {
-      matches.push(f);
-    }
+  locations.forEach((location) => {
+    const sourceFiles = glob.sync(`${location.source}/**/*`, {nodir: true})
+      .map((f) => {
+        const partial = f.replace(location.source, '');
+        return replaceVariables(partial, variables);
+      });
+
+    const destFiles = glob.sync(`${location.destination}/**/*`, {nodir: true});
+
+    destFiles.forEach((f) => {
+      const path = f.replace(location.destination, '');
+      if (sourceFiles.includes(path)) {
+        matches.push(f);
+      }
+    });
   });
 
   return matches;
 }
 
 export async function copyFolder(
-  source: string,
-  destination: string,
+  locations: ICopyLocation[],
   options: ICopyFolderOptions = {replaceVariables: []}): Promise<ICopyFolderResults> {
 
-  const skippedFilePaths = findPreExistingFiles(source, destination, options.replaceVariables);
+  const skippedFilePaths = findPreExistingFiles(locations, options.replaceVariables);
   if (skippedFilePaths.length > 0) {
     return {
       skippedFilePaths,
     };
   }
 
-  fs.mkdirSync(destination, {recursive: true});
+  locations.forEach((location) => {
+    fs.mkdirSync(location.destination, {recursive: true});
 
-  copyDir.sync(source, destination, {cover: false});
+    copyDir.sync(location.source, location.destination, {cover: false});
 
-  const destinationPaths = glob.sync(`${destination}/**/*`);
-  destinationPaths.push(destination);
+    const destinationPaths = glob.sync(`${location.destination}/**/*`);
+    destinationPaths.push(location.destination);
 
-  const replaceMatches: Array<{key: string, value: string}> = [];
-  destinationPaths.forEach((path) => {
+    const replaceMatches: Array<{key: string, value: string}> = [];
+    destinationPaths.forEach((path) => {
 
-    replaceMatches.forEach((match) => {
-      if (path.includes(match.key)) {
-        path = path.replace(match.key, match.value);
+      replaceMatches.forEach((match) => {
+        if (path.includes(match.key)) {
+          path = path.replace(match.key, match.value);
+        }
+      });
+
+      const newPath = renameFileWithVariables(path, options.replaceVariables);
+      if (newPath !== path) {
+        replaceMatches.push({key: path, value: newPath});
       }
+
+      replaceFileContents(newPath, options.replaceVariables);
     });
-
-    const newPath = renameFileWithVariables(path, options.replaceVariables);
-    if (newPath !== path) {
-      replaceMatches.push({key: path, value: newPath});
-    }
-
-    replaceFileContents(newPath, options.replaceVariables);
   });
 
   return {
