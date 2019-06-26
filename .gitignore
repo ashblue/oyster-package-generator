@@ -88,5 +88,6 @@ typings/
 .dynamodb/
 
 # Project Specific
-tmp
-dist
+tmp/
+dist/
+Assets/

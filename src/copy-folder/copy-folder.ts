@@ -34,7 +34,8 @@ function replaceFileContents(path: string, variables: IKeyValuePair[] | undefine
 
   let contents = fs.readFileSync(path).toString();
   variables.forEach((r) => {
-    contents = contents.replace(`{${r.variable}}`, r.value);
+    const matches = new RegExp(`{${r.variable}}`, 'g');
+    contents = contents.replace(matches, r.value);
   });
 
   fs.writeFileSync(path, contents);
@@ -48,8 +49,20 @@ export async function copyFolder(source: string, destination: string, options: I
   const filePaths = glob.sync(`${destination}/**/*`);
   filePaths.push(destination);
 
+  const replaceMatches: Array<{key: string, value: string}> = [];
   filePaths.forEach((path) => {
+
+    replaceMatches.forEach((match) => {
+      if (path.includes(match.key)) {
+        path = path.replace(match.key, match.value);
+      }
+    });
+
     const newPath = renameFileWithVariables(path, options.replaceVariables);
+    if (newPath !== path) {
+      replaceMatches.push({key: path, value: newPath});
+    }
+
     replaceFileContents(newPath, options.replaceVariables);
   });
 }

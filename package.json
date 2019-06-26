@@ -4,12 +4,11 @@
   "description": "CLI to automatically generate a Unity Package Manager project",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "build": "tsc",
+    "test": "npm run lint && jest",
+    "test:watch": "npm run lint && jest --watch",
+    "build": "npm run lint && tsc",
     "start": "npm run build && node dist/index.js",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "postinstall": "npm run build"
+    "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "author": "Ash Blue",
   "license": "MIT",

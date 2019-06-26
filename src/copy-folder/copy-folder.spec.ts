@@ -64,7 +64,23 @@ describe('copyFolder', () => {
       expect(fs.existsSync(`${DEST}/LoremIpsum`)).toBeTruthy();
     });
 
-    it('should replace variables in any discovered text files', async () => {
+    it('should not fail when renaming nested folders', async () => {
+      fs.mkdirSync(`${TMP_ASSETS}/{name}`);
+      fs.writeFileSync(`${TMP_ASSETS}/{name}/file.txt`, '{name}');
+
+      await copyFolder(TMP_ASSETS, DEST, {
+        replaceVariables: [
+          {
+            value: 'LoremIpsum',
+            variable: 'name',
+          },
+        ],
+      });
+
+      expect(fs.existsSync(`${DEST}/LoremIpsum`)).toBeTruthy();
+    });
+
+    it('should replace a variable in any discovered text files', async () => {
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}');
 
       await copyFolder(TMP_ASSETS, DEST, {
@@ -79,6 +95,24 @@ describe('copyFolder', () => {
       const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
 
       expect(contents).toContain('LoremIpsum');
+    });
+
+    it('should replace multiple variable in any discovered text files', async () => {
+      const nameValue = 'LoremIpsum';
+      fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}{name}');
+
+      await copyFolder(TMP_ASSETS, DEST, {
+        replaceVariables: [
+          {
+            value: nameValue,
+            variable: 'name',
+          },
+        ],
+      });
+
+      const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
+
+      expect(contents).toContain(`${nameValue}${nameValue}`);
     });
   });
 });
