@@ -6,6 +6,7 @@ export interface IQuestionsToAnswers {
   displayName: string;
   description: string;
   version: string;
+  keywords: string;
 }
 
 export class Terminal {
@@ -20,17 +21,30 @@ export class Terminal {
   }
 
   public async askQuestions(): Promise<IQuestionsToAnswers> {
-    return await this._inquirer.prompt(
+    const answers = await this._inquirer.prompt(
       [
         this.questionName(),
         this.questionDisplayName(),
         this.questionDescription(),
         this.questionUnityVersion(),
-        this.authorName(),
-        this.authorEmail(),
-        this.authorUrl(),
+        this.questionAuthorName(),
+        this.questionAuthorEmail(),
+        this.questionAuthorUrl(),
+        this.questionKeywords(),
       ],
-    ) as IQuestionsToAnswers;
+    );
+
+    if (answers.keywords.trim() === '') {
+      answers.keywords = [];
+    } else {
+      const keywordArray = answers.keywords
+        .split(',')
+        .map((k: string) => k.trim());
+
+      answers.keywords = JSON.stringify(keywordArray, null, 2);
+    }
+
+    return answers as IQuestionsToAnswers;
   }
 
   private questionName(): Question {
@@ -75,7 +89,7 @@ export class Terminal {
     };
   }
 
-  private authorName(): Question {
+  private questionAuthorName(): Question {
     return {
       message: `What is the author's name?`,
       name: 'authorName',
@@ -83,7 +97,7 @@ export class Terminal {
     };
   }
 
-  private authorEmail(): Question {
+  private questionAuthorEmail(): Question {
     return {
       message: `What is the author's email?`,
       name: 'authorEmail',
@@ -91,10 +105,18 @@ export class Terminal {
     };
   }
 
-  private authorUrl(): Question {
+  private questionAuthorUrl(): Question {
     return {
       message: `What is the author's url?`,
       name: 'authorUrl',
+      type: 'input',
+    };
+  }
+
+  private questionKeywords(): Question {
+    return {
+      message: `Keywords that identify this package. Please separate with a comma`,
+      name: 'keywords',
       type: 'input',
     };
   }

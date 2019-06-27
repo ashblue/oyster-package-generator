@@ -33,79 +33,123 @@ describe('Terminal', () => {
       _inquirerStub = {
         prompt: jest.fn().mockImplementation(() => Promise.resolve({})),
       };
-
-      const terminal = new Terminal(_inquirerStub);
-      await terminal.askQuestions();
     });
 
-    it('should ask for the name', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'name',
-        'input',
+    fdescribe('keyword conversion', () => {
+      async function getAnswers(keywords: string) {
+        _inquirerStub.prompt.mockImplementation(() =>
+          Promise.resolve({keywords}));
+
+        const terminal = new Terminal(_inquirerStub);
+        return await terminal.askQuestions();
+      }
+
+      it('should return an empty array for no keywords', async () => {
+        const answers = await getAnswers('');
+
+        expect(answers.keywords.length).toBe(0);
+      });
+
+      it('should return a keyword', async () => {
+        const answers = await getAnswers('a');
+
+        expect(answers.keywords)
+          .toBe(JSON.stringify(['a'], null, 2));
+      });
+
+      it('should return two keyword', async () => {
+        const answers = await getAnswers('a, b');
+
+        expect(answers.keywords)
+          .toBe(JSON.stringify(['a', 'b'], null, 2));
+      });
+    });
+
+    describe('question inputs', () => {
+      beforeEach(async () => {
+        const terminal = new Terminal(_inquirerStub);
+        await terminal.askQuestions();
+      });
+
+      it('should ask for the name', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'name',
+          'input',
         );
 
-      expect(match).not.toBeUndefined();
-    });
+        expect(match).not.toBeUndefined();
+      });
 
-    it('should ask for the display name', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'displayName',
-        'input',
-      );
+      it('should ask for the display name', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'displayName',
+          'input',
+        );
 
-      expect(match).not.toBeUndefined();
-    });
+        expect(match).not.toBeUndefined();
+      });
 
-    it('should ask for the description', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'description',
-        'input',
-      );
+      it('should ask for the description', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'description',
+          'input',
+        );
 
-      expect(match).not.toBeUndefined();
-    });
+        expect(match).not.toBeUndefined();
+      });
 
-    it('should ask for the unity version', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'version',
-        'input',
-      );
+      it('should ask for the unity version', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'version',
+          'input',
+        );
 
-      expect(match).not.toBeUndefined();
-    });
+        expect(match).not.toBeUndefined();
+      });
 
-    it('should ask for the author name', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'authorName',
-        'input',
-      );
+      it('should ask for the author name', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'authorName',
+          'input',
+        );
 
-      expect(match).not.toBeUndefined();
-    });
+        expect(match).not.toBeUndefined();
+      });
 
-    it('should ask for the author email', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'authorEmail',
-        'input',
-      );
+      it('should ask for the author email', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'authorEmail',
+          'input',
+        );
 
-      expect(match).not.toBeUndefined();
-    });
+        expect(match).not.toBeUndefined();
+      });
 
-    it('should ask for the author url', () => {
-      const match = findQuestionMatch(
-        _inquirerStub.prompt.mock.calls[0][0],
-        'authorUrl',
-        'input',
-      );
+      it('should ask for the author url', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'authorUrl',
+          'input',
+        );
 
-      expect(match).not.toBeUndefined();
+        expect(match).not.toBeUndefined();
+      });
+
+      it('should ask for keywords', () => {
+        const match = findQuestionMatch(
+          _inquirerStub.prompt.mock.calls[0][0],
+          'keywords',
+          'input',
+        );
+
+        expect(match).not.toBeUndefined();
+      });
     });
   });
 });

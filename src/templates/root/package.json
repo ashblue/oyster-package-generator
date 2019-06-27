@@ -10,9 +10,7 @@
     "semantic-release": "semantic-release",
     "commit": "git-cz"
   },
-  "keywords": [
-    {keywords}
-  ],
+  "keywords": {keywords},
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
