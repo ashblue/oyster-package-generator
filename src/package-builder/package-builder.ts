@@ -6,15 +6,18 @@ import {
   ICopyLocation,
   IKeyValuePair,
 } from '../copy-folder/copy-folder';
+import {GitDetector} from '../git-detector/git-detector';
 import {Terminal} from '../terminal/terminal';
 
 export class PackageBuilder {
   private readonly _copyFolder: copyFolderType;
   private readonly _terminal: Terminal;
+  private _gitDetector: GitDetector;
 
-  constructor(copyFolder: copyFolderType, terminal: Terminal) {
+  constructor(copyFolder: copyFolderType, terminal: Terminal, gitDetector: GitDetector) {
     this._copyFolder = copyFolder;
     this._terminal = terminal;
+    this._gitDetector = gitDetector;
   }
 
   public async Build(locations: ICopyLocation[]) {
@@ -30,6 +33,16 @@ export class PackageBuilder {
         variable: 'year',
       },
     ];
+
+    const gitDetails = await this._gitDetector.getDetails();
+    Object.keys(gitDetails).forEach((key) => {
+      replaceVariables.push({
+        // @ts-ignore
+        value: gitDetails[key],
+        variable: key,
+      });
+    });
+
     for (const key in answers) {
       if (!key) { continue; }
 
