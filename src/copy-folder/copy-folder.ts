@@ -21,8 +21,7 @@ export interface ICopyLocation {
 }
 
 export type copyFolderType = (
-  source: string,
-  destination: string,
+  locations: ICopyLocation[],
   options?: ICopyFolderOptions) => Promise<ICopyFolderResults>;
 
 function renameFileWithVariables(path: string, variables: IKeyValuePair[] | undefined): string {

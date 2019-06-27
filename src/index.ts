@@ -6,7 +6,12 @@ import {Terminal} from './terminal/terminal';
 async function runBuild() {
   const terminal = new Terminal(inquirer);
   const packageBuilder = new PackageBuilder(copyFolder, terminal);
-  return packageBuilder.Build('src/templates/assets', 'Assets');
+  return packageBuilder.Build([
+    {
+      destination: 'Assets',
+      source: 'src/templates/assets',
+    },
+  ]);
 }
 
 runBuild();

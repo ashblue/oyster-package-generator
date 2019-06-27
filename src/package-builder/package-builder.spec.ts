@@ -1,6 +1,6 @@
 import Mock = jest.Mock;
 import chalk from 'chalk';
-import {ICopyFolderOptions, ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
+import {ICopyFolderResults, ICopyLocation, IKeyValuePair} from '../copy-folder/copy-folder';
 import {PackageBuilder} from './package-builder';
 
 describe('PackageBuilder', () => {
@@ -9,6 +9,13 @@ describe('PackageBuilder', () => {
     let _copyFolder: Mock;
     let _terminal: any;
 
+    const SOURCE = 'src/templates/assets';
+    const DESTINATION = 'dist/Assets';
+    const LOCATION: ICopyLocation[] = [{
+      destination: DESTINATION,
+      source: SOURCE,
+    }];
+
     beforeEach(() => {
       _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       _copyFolder = jest.fn().mockImplementation(() => Promise.resolve({
@@ -16,28 +23,31 @@ describe('PackageBuilder', () => {
       } as ICopyFolderResults));
 
       _terminal = {
-        askQuestions: jest.fn().mockImplementation(() => Promise.resolve({})),
+        askQuestions: jest.fn().mockImplementation(() => Promise.resolve({
+          name: 'com.a.b',
+        })),
       };
     });
 
-    it('should give the copy folder source as src/templates/Assets', async () => {
+    it('should give the copy folder a source and destination', async () => {
       const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
-      const source = 'src/templates/assets';
 
-      await packageBuilder.Build(source, '');
+      await packageBuilder.Build(LOCATION);
 
       expect(_copyFolder.mock.calls[0][0])
-        .toEqual(source);
+        .toMatchObject(LOCATION);
     });
 
-    it('should give the copyFolder destination of Assets', async () => {
+    it('should add a replace variable to copyFolder of packageScope', async () => {
+      _terminal.askQuestions.mockImplementation(() => Promise.resolve({
+        name: 'com.a.b',
+      }));
       const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
-      const destination = 'dist/Assets';
 
-      await packageBuilder.Build('', destination);
+      await packageBuilder.Build(LOCATION);
 
-      expect(_copyFolder.mock.calls[0][1])
-        .toEqual(destination);
+      expect(_copyFolder.mock.calls[0][1].replaceVariables[0])
+        .toMatchObject({value: 'com.a', variable: 'packageScope'});
     });
 
     it('should send terminal answers as variable replacement option on copyFolder', async () => {
@@ -48,10 +58,6 @@ describe('PackageBuilder', () => {
         },
       ];
 
-      const options: ICopyFolderOptions = {
-        replaceVariables,
-      };
-
       const answers = replaceVariables.reduce((map, obj) => {
         // @ts-ignore
         map[obj.variable] = obj.value;
@@ -60,10 +66,10 @@ describe('PackageBuilder', () => {
 
       _terminal.askQuestions.mockImplementation(() => Promise.resolve(answers));
       const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
-      await packageBuilder.Build('', '');
+      await packageBuilder.Build(LOCATION);
 
-      expect(_copyFolder.mock.calls[0][2])
-        .toMatchObject(options);
+      expect(_copyFolder.mock.calls[0][1].replaceVariables[1])
+        .toMatchObject(replaceVariables[0]);
     });
 
     describe('when discovering duplicate files', () => {
@@ -73,9 +79,7 @@ describe('PackageBuilder', () => {
         } as ICopyFolderResults));
 
         const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
-        const source = 'src/templates/assets';
-
-        await packageBuilder.Build(source, '');
+        await packageBuilder.Build(LOCATION);
 
         expect(_consoleSpy).toHaveBeenCalledWith(
           chalk.yellow('Files discovered with matching names.'));
@@ -87,18 +91,16 @@ describe('PackageBuilder', () => {
         } as ICopyFolderResults));
 
         const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
-        const source = 'src/templates/assets';
 
-        await packageBuilder.Build(source, '');
+        await packageBuilder.Build(LOCATION);
 
         expect(_consoleSpy).toHaveBeenCalledWith(chalk.yellow('- a'));
       });
 
       it('should print a success message if no duplicates were found', async () => {
         const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
-        const source = 'src/templates/assets';
 
-        await packageBuilder.Build(source, '');
+        await packageBuilder.Build(LOCATION);
 
         expect(_consoleSpy).toHaveBeenCalledWith(
           chalk.green('Package generation complete'));

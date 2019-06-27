@@ -1,5 +1,11 @@
 import chalk from 'chalk';
-import {copyFolderType, ICopyFolderOptions, ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
+import {
+  copyFolderType,
+  ICopyFolderOptions,
+  ICopyFolderResults,
+  ICopyLocation,
+  IKeyValuePair,
+} from '../copy-folder/copy-folder';
 import {Terminal} from '../terminal/terminal';
 
 export class PackageBuilder {
@@ -11,10 +17,15 @@ export class PackageBuilder {
     this._terminal = terminal;
   }
 
-  public async Build(source: string, destination: string) {
+  public async Build(locations: ICopyLocation[]) {
     const answers = await this._terminal.askQuestions();
 
-    const replaceVariables: IKeyValuePair[] = [];
+    const replaceVariables: IKeyValuePair[] = [
+      {
+        value: answers.name.split('.', 2).join('.'),
+        variable: 'packageScope',
+      },
+    ];
     for (const key in answers) {
       if (!key) { continue; }
 
@@ -27,7 +38,7 @@ export class PackageBuilder {
     }
 
     const options: ICopyFolderOptions = {replaceVariables};
-    const copyFolderResults = await this._copyFolder(source, destination, options);
+    const copyFolderResults = await this._copyFolder(locations, options);
 
     this.printResultsMessage(copyFolderResults);
   }
