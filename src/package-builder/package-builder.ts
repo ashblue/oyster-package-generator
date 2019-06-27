@@ -25,6 +25,10 @@ export class PackageBuilder {
         value: answers.name.split('.', 2).join('.'),
         variable: 'packageScope',
       },
+      {
+        value: new Date().getFullYear().toString(),
+        variable: 'year',
+      },
     ];
     for (const key in answers) {
       if (!key) { continue; }

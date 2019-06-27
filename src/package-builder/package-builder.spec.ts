@@ -3,6 +3,16 @@ import chalk from 'chalk';
 import {ICopyFolderResults, ICopyLocation, IKeyValuePair} from '../copy-folder/copy-folder';
 import {PackageBuilder} from './package-builder';
 
+function findVariableMatch(variables: IKeyValuePair[], variable: string, value: string): IKeyValuePair | undefined {
+  return variables.find((v: IKeyValuePair) => {
+      if (v.variable === variable && v.value === value) {
+        return true;
+      }
+
+      return false;
+    });
+}
+
 describe('PackageBuilder', () => {
   describe('Build method', () => {
     let _consoleSpy: jest.SpyInstance;
@@ -38,16 +48,30 @@ describe('PackageBuilder', () => {
         .toMatchObject(LOCATION);
     });
 
-    it('should add a replace variable to copyFolder of packageScope', async () => {
-      _terminal.askQuestions.mockImplementation(() => Promise.resolve({
-        name: 'com.a.b',
-      }));
+    it('should add a replace variable to copyFolder for packageScope', async () => {
       const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
 
       await packageBuilder.Build(LOCATION);
 
-      expect(_copyFolder.mock.calls[0][1].replaceVariables[0])
-        .toMatchObject({value: 'com.a', variable: 'packageScope'});
+      const match = findVariableMatch(
+        _copyFolder.mock.calls[0][1].replaceVariables,
+        'packageScope',
+        'com.a');
+
+      expect(match).not.toBeUndefined();
+    });
+
+    it('should add a replace variable to copyFolder for year', async () => {
+      const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
+
+      await packageBuilder.Build(LOCATION);
+
+      const match = findVariableMatch(
+        _copyFolder.mock.calls[0][1].replaceVariables,
+        'year',
+        new Date().getFullYear().toString());
+
+      expect(match).not.toBeUndefined();
     });
 
     it('should send terminal answers as variable replacement option on copyFolder', async () => {
@@ -68,8 +92,12 @@ describe('PackageBuilder', () => {
       const packageBuilder = new PackageBuilder(_copyFolder, _terminal);
       await packageBuilder.Build(LOCATION);
 
-      expect(_copyFolder.mock.calls[0][1].replaceVariables[1])
-        .toMatchObject(replaceVariables[0]);
+      const match = findVariableMatch(
+        _copyFolder.mock.calls[0][1].replaceVariables,
+        replaceVariables[0].variable,
+        replaceVariables[0].value);
+
+      expect(match).not.toBeUndefined();
     });
 
     describe('when discovering duplicate files', () => {
