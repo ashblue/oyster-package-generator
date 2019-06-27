@@ -26,6 +26,9 @@ export class Terminal {
         this.questionDisplayName(),
         this.questionDescription(),
         this.questionUnityVersion(),
+        this.authorName(),
+        this.authorEmail(),
+        this.authorUrl(),
       ],
     ) as IQuestionsToAnswers;
   }
@@ -68,6 +71,30 @@ export class Terminal {
     return {
       message: `Minimum Unity version?. No version indicates all versions of Unity. Example ${example}`,
       name: 'version',
+      type: 'input',
+    };
+  }
+
+  private authorName(): Question {
+    return {
+      message: `What is the author's name?`,
+      name: 'authorName',
+      type: 'input',
+    };
+  }
+
+  private authorEmail(): Question {
+    return {
+      message: `What is the author's email?`,
+      name: 'authorEmail',
+      type: 'input',
+    };
+  }
+
+  private authorUrl(): Question {
+    return {
+      message: `What is the author's url?`,
+      name: 'authorUrl',
       type: 'input',
     };
   }

@@ -1,5 +1,15 @@
-import chalk from 'chalk';
+import {Question} from 'inquirer';
 import { Terminal } from './terminal';
+
+function findQuestionMatch(questions: Question[], name: string, type: string): Question | undefined {
+  return questions.find((v) => {
+    if (v.name === name && v.type === type) {
+      return true;
+    }
+
+    return false;
+  });
+}
 
 describe('Terminal', () => {
   describe('requiredString method', () => {
@@ -29,49 +39,73 @@ describe('Terminal', () => {
     });
 
     it('should ask for the name', () => {
-      const packageNameFormat = chalk.blue('com.<company-name>.<package-name>');
-      const packageNameExample = chalk.blue('com.unity.timeline');
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'name',
+        'input',
+        );
 
-      expect(_inquirerStub.prompt.mock.calls[0][0][0])
-        .toMatchObject({
-          message: `Package name? Internal ID that's permanent. Example ${packageNameFormat} or ${packageNameExample}`,
-          name: 'name',
-          type: 'input',
-          validate: Terminal.requiredString,
-        });
+      expect(match).not.toBeUndefined();
     });
 
     it('should ask for the display name', () => {
-      const example = chalk.blue('Unity Timeline');
-      const exampleAlt = chalk.blue('ProBuilder');
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'displayName',
+        'input',
+      );
 
-      expect(_inquirerStub.prompt.mock.calls[0][0][1])
-        .toMatchObject({
-          message: `Package display name? Should be user-friendly. Example ${example} or ${exampleAlt}`,
-          name: 'displayName',
-          type: 'input',
-          validate: Terminal.requiredString,
-        });
+      expect(match).not.toBeUndefined();
     });
 
     it('should ask for the description', () => {
-      expect(_inquirerStub.prompt.mock.calls[0][0][2])
-        .toMatchObject({
-          message: `Package description?. Will appear in the package manager window`,
-          name: 'description',
-          type: 'input',
-        });
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'description',
+        'input',
+      );
+
+      expect(match).not.toBeUndefined();
     });
 
     it('should ask for the unity version', () => {
-      const example = chalk.blue('2019.1');
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'version',
+        'input',
+      );
 
-      expect(_inquirerStub.prompt.mock.calls[0][0][3])
-        .toMatchObject({
-          message: `Minimum Unity version?. No version indicates all versions of Unity. Example ${example}`,
-          name: 'version',
-          type: 'input',
-        });
+      expect(match).not.toBeUndefined();
+    });
+
+    it('should ask for the author name', () => {
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'authorName',
+        'input',
+      );
+
+      expect(match).not.toBeUndefined();
+    });
+
+    it('should ask for the author email', () => {
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'authorEmail',
+        'input',
+      );
+
+      expect(match).not.toBeUndefined();
+    });
+
+    it('should ask for the author url', () => {
+      const match = findQuestionMatch(
+        _inquirerStub.prompt.mock.calls[0][0],
+        'authorUrl',
+        'input',
+      );
+
+      expect(match).not.toBeUndefined();
     });
   });
 });
