@@ -34,6 +34,10 @@ export class Terminal {
       ],
     );
 
+    if (!answers.keywords) {
+      return answers as IQuestionsToAnswers;
+    }
+
     if (answers.keywords.trim() === '') {
       answers.keywords = [];
     } else {

@@ -35,7 +35,7 @@ describe('Terminal', () => {
       };
     });
 
-    fdescribe('keyword conversion', () => {
+    describe('keyword conversion', () => {
       async function getAnswers(keywords: string) {
         _inquirerStub.prompt.mockImplementation(() =>
           Promise.resolve({keywords}));

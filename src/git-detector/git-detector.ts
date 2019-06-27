@@ -3,11 +3,33 @@ export interface IGitDetails {
   gitUrl: string;
 }
 
+export interface IRepoStatus {
+  isGitRepo: boolean;
+  message: string;
+}
+
 export class GitDetector {
   private readonly _gitRemoteOriginUrl: any;
 
-  constructor(gitRemoteOriginUrl: any) {
+  constructor(gitRemoteOriginUrl: Promise<string>) {
     this._gitRemoteOriginUrl = gitRemoteOriginUrl;
+  }
+
+  public async checkIfGitRepo(): Promise<IRepoStatus> {
+    let isGitRepo = true;
+    let message = '';
+
+    try {
+      await this._gitRemoteOriginUrl();
+    } catch (e) {
+      isGitRepo = false;
+      message = e;
+    }
+
+    return {
+      isGitRepo,
+      message,
+    };
   }
 
   public async getDetails(): Promise<IGitDetails> {

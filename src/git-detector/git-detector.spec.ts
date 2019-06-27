@@ -1,35 +1,69 @@
 import {GitDetector} from './git-detector';
 
-describe('GitDetails', () => {
-  it('should return the current gitUrl', async () => {
-    const remote = 'git@github.com:ashblue/oyster-package-generator.git';
-    let http = remote.replace(
-      'git@github.com:',
-      'https://github.com/');
-    http = http.replace('.git', '');
+describe('GitDetector', () => {
+  describe('isGitRepo', () => {
+    it('should resolve if there is no error', async () => {
+      const gitRemoteOriginUrl = jest.fn()
+        .mockImplementation(() => Promise.resolve());
 
-    const gitRemoteOriginUrl = jest.fn()
-      .mockImplementation(() => Promise.resolve(remote));
+      const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
+      const result = await gitDetector.checkIfGitRepo();
 
-    const gitDetector = new GitDetector(gitRemoteOriginUrl);
-    const details = await gitDetector.getDetails();
+      expect(result.isGitRepo).toBe(true);
+    });
 
-    expect(details.gitUrl).toBe(http);
+    it('should track an error if promise rejects', async () => {
+      const gitRemoteOriginUrl = jest.fn()
+        .mockImplementation(() => Promise.reject());
+
+      const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
+      const result = await gitDetector.checkIfGitRepo();
+
+      expect(result.isGitRepo).toBe(false);
+    });
+
+    it('should return a message promise rejects', async () => {
+      const gitRemoteOriginUrl = jest.fn()
+        .mockImplementation(() => Promise.reject('a'));
+
+      const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
+      const result = await gitDetector.checkIfGitRepo();
+
+      expect(result.message).toBe('a');
+    });
   });
 
-  it('should return the current gitUrlNoHttp', async () => {
-    const remote = 'git@github.com:ashblue/oyster-package-generator.git';
-    let noHttp = remote.replace(
-      'git@github.com:',
-      'github.com/');
-    noHttp = noHttp.replace('.git', '');
+  describe('getDetails', () => {
+    it('should return the current gitUrl', async () => {
+      const remote = 'git@github.com:ashblue/oyster-package-generator.git';
+      let http = remote.replace(
+        'git@github.com:',
+        'https://github.com/');
+      http = http.replace('.git', '');
 
-    const gitRemoteOriginUrl = jest.fn()
-      .mockImplementation(() => Promise.resolve(remote));
+      const gitRemoteOriginUrl = jest.fn()
+        .mockImplementation(() => Promise.resolve(remote));
 
-    const gitDetector = new GitDetector(gitRemoteOriginUrl);
-    const details = await gitDetector.getDetails();
+      const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
+      const details = await gitDetector.getDetails();
 
-    expect(details.gitUrlNoHttp).toBe(noHttp);
+      expect(details.gitUrl).toBe(http);
+    });
+
+    it('should return the current gitUrlNoHttp', async () => {
+      const remote = 'git@github.com:ashblue/oyster-package-generator.git';
+      let noHttp = remote.replace(
+        'git@github.com:',
+        'github.com/');
+      noHttp = noHttp.replace('.git', '');
+
+      const gitRemoteOriginUrl = jest.fn()
+        .mockImplementation(() => Promise.resolve(remote));
+
+      const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
+      const details = await gitDetector.getDetails();
+
+      expect(details.gitUrlNoHttp).toBe(noHttp);
+    });
   });
 });

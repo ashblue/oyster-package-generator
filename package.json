@@ -10,6 +10,9 @@
     "start": "npm run build && node dist/index.js",
     "lint": "tslint -c tslint.json -p tsconfig.json"
   },
+  "bin": {
+    "oyster": "dist/index.js"
+  },
   "author": "Ash Blue",
   "license": "MIT",
   "devDependencies": {

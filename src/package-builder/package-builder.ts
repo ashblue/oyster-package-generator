@@ -21,6 +21,11 @@ export class PackageBuilder {
   }
 
   public async Build(locations: ICopyLocation[]) {
+    const isGitRepo = await this.verifyGitRepo();
+    if (!isGitRepo) {
+      return;
+    }
+
     const answers = await this._terminal.askQuestions();
 
     const replaceVariables: IKeyValuePair[] = [
@@ -58,6 +63,18 @@ export class PackageBuilder {
     const copyFolderResults = await this._copyFolder(locations, options);
 
     this.printResultsMessage(copyFolderResults);
+  }
+
+  private async verifyGitRepo(): Promise<boolean> {
+    const gitRepo = await this._gitDetector.checkIfGitRepo();
+    if (!gitRepo.isGitRepo) {
+      // tslint:disable-next-line:no-console
+      console.log(chalk.redBright('Aborting package generation'));
+      // tslint:disable-next-line:no-console
+      console.log(chalk.yellow('Please ensure this is a Git repo with the origin remote properly set'));
+    }
+
+    return gitRepo.isGitRepo;
   }
 
   private printResultsMessage(copyFolderResults: ICopyFolderResults) {

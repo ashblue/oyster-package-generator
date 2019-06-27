@@ -1,7 +1,7 @@
 import Mock = jest.Mock;
 import chalk from 'chalk';
 import {ICopyFolderResults, ICopyLocation, IKeyValuePair} from '../copy-folder/copy-folder';
-import {IGitDetails} from '../git-detector/git-detector';
+import {IGitDetails, IRepoStatus} from '../git-detector/git-detector';
 import {PackageBuilder} from './package-builder';
 
 function findVariableMatch(variables: IKeyValuePair[], variable: string, value: string): IKeyValuePair | undefined {
@@ -31,6 +31,11 @@ describe('PackageBuilder', () => {
 
     beforeEach(() => {
       _gitDetector = {
+        checkIfGitRepo: jest.fn()
+          .mockImplementation(() => Promise.resolve({
+            isGitRepo: true,
+            message: 'null',
+          } as IRepoStatus)),
         getDetails: jest.fn()
           .mockImplementation(() => Promise.resolve({})),
       };
@@ -49,7 +54,7 @@ describe('PackageBuilder', () => {
       _packageBuilder = new PackageBuilder(_copyFolder, _terminal, _gitDetector);
     });
 
-    describe('Build method', () => {
+    describe('standard run', () => {
       beforeEach(async () => {
         await _packageBuilder.Build(LOCATION);
       });
@@ -129,6 +134,17 @@ describe('PackageBuilder', () => {
 
         expect(match).not.toBeUndefined();
       });
+    });
+
+    it('should not ask questions if the repo is not a git repository', async () => {
+      _gitDetector.checkIfGitRepo.mockImplementation(() => Promise.resolve({
+        isGitRepo: false,
+        message: '',
+      }));
+
+      await _packageBuilder.Build(LOCATION);
+
+      expect(_terminal.askQuestions).not.toHaveBeenCalled();
     });
 
     describe('when discovering duplicate files', () => {
