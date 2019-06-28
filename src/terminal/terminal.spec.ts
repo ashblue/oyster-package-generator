@@ -47,7 +47,8 @@ describe('Terminal', () => {
       it('should return an empty array for no keywords', async () => {
         const answers = await getAnswers('');
 
-        expect(answers.keywords.length).toBe(0);
+        expect(answers.keywords)
+          .toBe(JSON.stringify([], null, 2));
       });
 
       it('should return a keyword', async () => {

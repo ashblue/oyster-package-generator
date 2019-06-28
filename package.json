@@ -11,7 +11,7 @@
     "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "bin": {
-    "oyster": "dist/index.js"
+    "oyster": "./bin/oyster"
   },
   "author": "Ash Blue",
   "license": "MIT",

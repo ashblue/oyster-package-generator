@@ -34,21 +34,21 @@ export class Terminal {
       ],
     );
 
-    if (!answers.keywords) {
-      return answers as IQuestionsToAnswers;
-    }
-
-    if (answers.keywords.trim() === '') {
-      answers.keywords = [];
-    } else {
-      const keywordArray = answers.keywords
-        .split(',')
-        .map((k: string) => k.trim());
-
-      answers.keywords = JSON.stringify(keywordArray, null, 2);
-    }
+    answers.keywords = this.keywordsToJsonStringArray(answers.keywords);
 
     return answers as IQuestionsToAnswers;
+  }
+
+  private keywordsToJsonStringArray(keywords: string): string {
+    if (!keywords || keywords.trim() === '') {
+      return JSON.stringify([], null, 2);
+    }
+
+    const keywordArray = keywords
+      .split(',')
+      .map((k: string) => k.trim());
+
+    return JSON.stringify(keywordArray, null, 2);
   }
 
   private questionName(): Question {

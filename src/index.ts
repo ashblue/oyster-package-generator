@@ -17,6 +17,10 @@ async function runBuild() {
       destination: 'Assets',
       source: path.resolve(__dirname, '../src/templates/assets'),
     },
+    {
+      destination: './',
+      source: path.resolve(__dirname, '../src/templates/root'),
+    },
   ]);
 }
 
