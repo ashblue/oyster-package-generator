@@ -1,16 +1,71 @@
 import * as del from 'del';
 import * as fs from 'fs';
-import {copyFolder} from './copy-folder';
+import {copyFolder, findPreExistingFiles} from './copy-folder';
 
-describe('copyFolder', () => {
-  const TMP_ASSETS = 'tmp/assets';
-  const DEST = 'tmp/dist/assets';
+const TMP_ASSETS = 'tmp/assets';
+const DEST = 'tmp/dist/assets';
 
-  beforeEach(() => {
-    del.sync('tmp');
-    fs.mkdirSync(TMP_ASSETS, {recursive: true});
+beforeEach(() => {
+  del.sync('tmp');
+  fs.mkdirSync(TMP_ASSETS, {recursive: true});
+});
+
+describe('findPreExistingFiles method', () => {
+  it('should detect pre-existing files if they exist', async () => {
+    fs.mkdirSync(DEST, {recursive: true});
+    fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
+    fs.writeFileSync(`${DEST}/file.txt`, 'old');
+
+    const results = findPreExistingFiles([{
+      destination: DEST,
+      source: TMP_ASSETS,
+    }], []);
+
+    expect(results[0]).toContain('file.txt');
   });
 
+  it('should not return non-matching pre-existing files', async () => {
+    fs.mkdirSync(DEST, {recursive: true});
+    fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
+
+    const results = findPreExistingFiles([{
+      destination: DEST,
+      source: TMP_ASSETS,
+    }], []);
+
+    expect(results.length).toEqual(0);
+  });
+
+  it('should never replace pre-existing files with variable injection', async () => {
+    const name = 'LoremIpsum';
+    const sourcePath = `${TMP_ASSETS}/{name}`;
+    const destPath = `${DEST}/${name}`;
+    const destFile = `${destPath}/file.txt`;
+
+    fs.mkdirSync(sourcePath, {recursive: true});
+    fs.mkdirSync(destPath, {recursive: true});
+    fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
+    fs.writeFileSync(destFile, 'old');
+
+    const results = findPreExistingFiles(
+      [
+        {
+          destination: DEST,
+          source: TMP_ASSETS,
+        }],
+      [
+        {
+          value: name,
+          variable: 'name',
+        },
+      ],
+    );
+
+    expect(results[0]).toContain('file.txt');
+  });
+});
+
+describe('copyFolder method', () => {
   it('should copy the folder to the appointed destination', async () => {
     await copyFolder([{
       destination: DEST,
@@ -40,96 +95,6 @@ describe('copyFolder', () => {
     }]);
 
     expect(fs.existsSync(`${DEST}/Runtime`)).toBeTruthy();
-  });
-
-  describe('file overwrite prevention', () => {
-    it('should never replace pre-existing files', async () => {
-      fs.mkdirSync(DEST, {recursive: true});
-      fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
-      fs.writeFileSync(`${DEST}/file.txt`, 'old');
-
-      await copyFolder([{
-        destination: DEST,
-        source: TMP_ASSETS,
-      }]);
-      const contents = fs.readFileSync(`${DEST}/file.txt`).toString();
-
-      expect(contents).toEqual('old');
-    });
-
-    it('should never replace pre-existing files with variable injection', async () => {
-      const name = 'LoremIpsum';
-      const sourcePath = `${TMP_ASSETS}/{name}`;
-      const destPath = `${DEST}/${name}`;
-      const destFile = `${destPath}/file.txt`;
-
-      fs.mkdirSync(sourcePath, {recursive: true});
-      fs.mkdirSync(destPath, {recursive: true});
-      fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
-      fs.writeFileSync(destFile, 'old');
-
-      await copyFolder(
-        [
-          {
-            destination: DEST,
-            source: TMP_ASSETS,
-          }],
-        {
-          replaceVariables: [
-            {
-              value: name,
-              variable: 'name',
-            },
-          ],
-        },
-      );
-      const contents = fs.readFileSync(destFile).toString();
-
-      expect(contents).toEqual('old');
-    });
-
-    it('should return files that are skipped', async () => {
-      fs.mkdirSync(DEST, {recursive: true});
-      fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
-      fs.writeFileSync(`${DEST}/file.txt`, 'old');
-
-      const results = await copyFolder([{
-        destination: DEST,
-        source: TMP_ASSETS,
-      }]);
-
-      expect(results.skippedFilePaths[0]).toEqual(`${DEST}/file.txt`);
-      expect(results.skippedFilePaths.length).toEqual(1);
-    });
-
-    it('should return files that are skipped with variable names', async () => {
-      const name = 'LoremIpsum';
-      const sourcePath = `${TMP_ASSETS}/{name}`;
-      const destPath = `${DEST}/${name}`;
-      const destFile = `${destPath}/file.txt`;
-
-      fs.mkdirSync(sourcePath, {recursive: true});
-      fs.mkdirSync(destPath, {recursive: true});
-      fs.writeFileSync(`${sourcePath}/file.txt`, 'new');
-      fs.writeFileSync(destFile, 'old');
-
-      const results = await copyFolder(
-        [{
-          destination: DEST,
-          source: TMP_ASSETS,
-        }],
-        {
-          replaceVariables: [
-            {
-              value: name,
-              variable: 'name',
-            },
-          ],
-        });
-
-      expect(results.skippedFilePaths[0]).toEqual(destFile);
-      expect(results.skippedFilePaths.length).toEqual(1);
-    });
   });
 
   describe('variable renaming', () => {

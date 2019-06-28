@@ -66,13 +66,11 @@ describe('Terminal', () => {
       });
     });
 
-    describe('question inputs', () => {
-      beforeEach(async () => {
+    describe('ask name', () => {
+      it('should ask for the name', async () => {
         const terminal = new Terminal(_inquirerStub);
-        await terminal.askQuestions();
-      });
+        await terminal.askName();
 
-      it('should ask for the name', () => {
         const match = findQuestionMatch(
           _inquirerStub.prompt.mock.calls[0][0],
           'name',
@@ -80,6 +78,13 @@ describe('Terminal', () => {
         );
 
         expect(match).not.toBeUndefined();
+      });
+    });
+
+    describe('question inputs', () => {
+      beforeEach(async () => {
+        const terminal = new Terminal(_inquirerStub);
+        await terminal.askQuestions();
       });
 
       it('should ask for the display name', () => {

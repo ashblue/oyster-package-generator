@@ -2,7 +2,6 @@ import chalk from 'chalk';
 import { Inquirer, Question } from 'inquirer';
 
 export interface IQuestionsToAnswers {
-  name: string;
   displayName: string;
   description: string;
   version: string;
@@ -20,10 +19,19 @@ export class Terminal {
     this._inquirer = inquirer;
   }
 
+  public async askName(): Promise<string> {
+    const question = await this._inquirer.prompt(
+      [
+        this.questionName(),
+      ],
+    );
+
+    return question.name;
+  }
+
   public async askQuestions(): Promise<IQuestionsToAnswers> {
     const answers = await this._inquirer.prompt(
       [
-        this.questionName(),
         this.questionDisplayName(),
         this.questionDescription(),
         this.questionUnityVersion(),

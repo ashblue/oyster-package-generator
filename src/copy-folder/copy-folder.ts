@@ -22,7 +22,9 @@ export interface ICopyLocation {
 
 export type copyFolderType = (
   locations: ICopyLocation[],
-  options?: ICopyFolderOptions) => Promise<ICopyFolderResults>;
+  options?: ICopyFolderOptions) => Promise<void>;
+
+export type findPreExistingFilesType = (locations: ICopyLocation[], variables: IKeyValuePair[]) => string[];
 
 function renameFileWithVariables(path: string, variables: IKeyValuePair[] | undefined): string {
   if (!path.includes('{') || !path.includes('}')) { return path; }
@@ -59,7 +61,7 @@ function replaceFileContents(path: string, variables: IKeyValuePair[] | undefine
   fs.writeFileSync(path, newText);
 }
 
-function findPreExistingFiles(locations: ICopyLocation[], variables: IKeyValuePair[]) {
+export function findPreExistingFiles(locations: ICopyLocation[], variables: IKeyValuePair[]) {
   const matches: string[] = [];
   locations.forEach((location) => {
     const sourceFiles = glob.sync(`${location.source}/**/*`, {nodir: true})
@@ -83,14 +85,7 @@ function findPreExistingFiles(locations: ICopyLocation[], variables: IKeyValuePa
 
 export async function copyFolder(
   locations: ICopyLocation[],
-  options: ICopyFolderOptions = {replaceVariables: []}): Promise<ICopyFolderResults> {
-
-  const skippedFilePaths = findPreExistingFiles(locations, options.replaceVariables);
-  if (skippedFilePaths.length > 0) {
-    return {
-      skippedFilePaths,
-    };
-  }
+  options: ICopyFolderOptions = {replaceVariables: []}): Promise<void> {
 
   locations.forEach((location) => {
     fs.mkdirSync(location.destination, {recursive: true});
@@ -117,8 +112,4 @@ export async function copyFolder(
       replaceFileContents(newPath, options.replaceVariables);
     });
   });
-
-  return {
-    skippedFilePaths,
-  };
 }

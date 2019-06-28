@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import {
-  copyFolderType,
+  copyFolderType, findPreExistingFilesType,
   ICopyFolderOptions,
   ICopyFolderResults,
   ICopyLocation,
@@ -12,10 +12,16 @@ import {Terminal} from '../terminal/terminal';
 export class PackageBuilder {
   private readonly _copyFolder: copyFolderType;
   private readonly _terminal: Terminal;
-  private _gitDetector: GitDetector;
+  private readonly _gitDetector: GitDetector;
+  private readonly _findPreExistingFiles: findPreExistingFilesType;
 
-  constructor(copyFolder: copyFolderType, terminal: Terminal, gitDetector: GitDetector) {
+  constructor(
+    copyFolder: copyFolderType,
+    findPreExistingFiles: findPreExistingFilesType,
+    terminal: Terminal,
+    gitDetector: GitDetector) {
     this._copyFolder = copyFolder;
+    this._findPreExistingFiles = findPreExistingFiles;
     this._terminal = terminal;
     this._gitDetector = gitDetector;
   }
@@ -26,11 +32,22 @@ export class PackageBuilder {
       return;
     }
 
-    const answers = await this._terminal.askQuestions();
+    const name = await this._terminal.askName();
+    const fileDuplicates = this._findPreExistingFiles(locations,
+      [{variable: 'name', value: name}]);
+
+    if (fileDuplicates.length > 0) {
+      this.printDuplicatesMessage(fileDuplicates);
+      return;
+    }
+
+    const results = await this._terminal.askQuestions();
+    const answers: any = results;
+    answers.name = name;
 
     const replaceVariables: IKeyValuePair[] = [
       {
-        value: answers.name.split('.', 2).join('.'),
+        value: name.split('.', 2).join('.'),
         variable: 'packageScope',
       },
       {
@@ -60,9 +77,9 @@ export class PackageBuilder {
     }
 
     const options: ICopyFolderOptions = {replaceVariables};
-    const copyFolderResults = await this._copyFolder(locations, options);
+    await this._copyFolder(locations, options);
 
-    this.printResultsMessage(copyFolderResults);
+    this.printResultsMessage();
   }
 
   private async verifyGitRepo(): Promise<boolean> {
@@ -77,29 +94,29 @@ export class PackageBuilder {
     return gitRepo.isGitRepo;
   }
 
-  private printResultsMessage(copyFolderResults: ICopyFolderResults) {
-    if (copyFolderResults.skippedFilePaths.length > 0) {
-      // tslint:disable-next-line:no-console
-      console.log(chalk.redBright('Package generation aborted.'));
+  private printDuplicatesMessage(duplicates: string[]) {
+    // tslint:disable-next-line:no-console
+    console.log(chalk.redBright('Package generation aborted.'));
 
-      // tslint:disable-next-line:no-console
-      console.log(chalk.yellow('Files discovered with matching names.'));
+    // tslint:disable-next-line:no-console
+    console.log(chalk.yellow('Files discovered with matching names.'));
 
-      // tslint:disable-next-line:no-console
-      console.log(
-        chalk.gray(
-          'Please delete listed files and rerun the command. ' +
-          'Make sure to backup files before deleting.',
-        ),
-      );
+    // tslint:disable-next-line:no-console
+    console.log(
+      chalk.gray(
+        'Please delete listed files and rerun the command. ' +
+        'Make sure to backup files before deleting.',
+      ),
+    );
 
-      copyFolderResults.skippedFilePaths.forEach((f) => {
-        // tslint:disable-next-line:no-console
-        console.log(chalk.yellow(`- ${f}`));
-      });
-    } else {
+    duplicates.forEach((f) => {
       // tslint:disable-next-line:no-console
-      console.log(chalk.green('Package generation complete'));
-    }
+      console.log(chalk.yellow(`- ${f}`));
+    });
+  }
+
+  private printResultsMessage() {
+    // tslint:disable-next-line:no-console
+    console.log(chalk.green('Package generation complete'));
   }
 }

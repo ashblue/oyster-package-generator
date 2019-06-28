@@ -6,12 +6,12 @@ import {PackageBuilder} from './package-builder';
 
 function findVariableMatch(variables: IKeyValuePair[], variable: string, value: string): IKeyValuePair | undefined {
   return variables.find((v: IKeyValuePair) => {
-      if (v.variable === variable && v.value === value) {
-        return true;
-      }
+    if (v.variable === variable && v.value === value) {
+      return true;
+    }
 
-      return false;
-    });
+    return false;
+  });
 }
 
 describe('PackageBuilder', () => {
@@ -19,6 +19,7 @@ describe('PackageBuilder', () => {
     let _packageBuilder: PackageBuilder;
     let _consoleSpy: jest.SpyInstance;
     let _copyFolder: Mock;
+    let _findPreExistingFiles: Mock;
     let _terminal: any;
     let _gitDetector: any;
 
@@ -45,13 +46,20 @@ describe('PackageBuilder', () => {
         skippedFilePaths: [],
       } as ICopyFolderResults));
 
+      _findPreExistingFiles = jest.fn().mockImplementation(() => []);
+
       _terminal = {
+        askName: jest.fn().mockImplementation(() => Promise.resolve('com.a.b')),
         askQuestions: jest.fn().mockImplementation(() => Promise.resolve({
-          name: 'com.a.b',
+          displayName: 'A B',
         })),
       };
 
-      _packageBuilder = new PackageBuilder(_copyFolder, _terminal, _gitDetector);
+      _packageBuilder = new PackageBuilder(
+        _copyFolder,
+        _findPreExistingFiles,
+        _terminal,
+        _gitDetector);
     });
 
     describe('standard run', () => {
@@ -83,11 +91,12 @@ describe('PackageBuilder', () => {
       });
     });
 
-    it('should send terminal answers as variable replacement option on copyFolder', async () => {
+    it('should combine terminal answers as variable replacement options on copyFolder', async () => {
+      const name = await _terminal.askName();
       const replaceVariables: IKeyValuePair[] = [
         {
           value: 'a',
-          variable: 'name',
+          variable: 'b',
         },
       ];
 
@@ -100,12 +109,17 @@ describe('PackageBuilder', () => {
       _terminal.askQuestions.mockImplementation(() => Promise.resolve(answers));
       await _packageBuilder.Build(LOCATION);
 
-      const match = findVariableMatch(
+      const matchA = findVariableMatch(
+        _copyFolder.mock.calls[0][1].replaceVariables,
+        'name',
+        name);
+      expect(matchA).not.toBeUndefined();
+
+      const matchB = findVariableMatch(
         _copyFolder.mock.calls[0][1].replaceVariables,
         replaceVariables[0].variable,
         replaceVariables[0].value);
-
-      expect(match).not.toBeUndefined();
+      expect(matchB).not.toBeUndefined();
     });
 
     it('should pass git detector data as replace variables', async () => {
@@ -147,34 +161,35 @@ describe('PackageBuilder', () => {
       expect(_terminal.askQuestions).not.toHaveBeenCalled();
     });
 
-    describe('when discovering duplicate files', () => {
-      it('should print a message that duplicate files were found', async () => {
-        _copyFolder.mockImplementation(() => Promise.resolve({
-          skippedFilePaths: ['a'],
-        } as ICopyFolderResults));
-
+    describe('duplicate files found', () => {
+      beforeEach(async () => {
+        _findPreExistingFiles.mockImplementation(() => ['a']);
         await _packageBuilder.Build(LOCATION);
+      });
 
+      it('should ask for the name', async () => {
+        expect(_terminal.askName).toHaveBeenCalled();
+      });
+
+      it('should not ask full questions', async () => {
+        expect(_terminal.askQuestions).not.toHaveBeenCalled();
+      });
+
+      it('should print a message that duplicate files were found', async () => {
         expect(_consoleSpy).toHaveBeenCalledWith(
           chalk.yellow('Files discovered with matching names.'));
       });
 
       it('should print all duplicate files found', async () => {
-        _copyFolder.mockImplementation(() => Promise.resolve({
-          skippedFilePaths: ['a'],
-        } as ICopyFolderResults));
-
-        await _packageBuilder.Build(LOCATION);
-
         expect(_consoleSpy).toHaveBeenCalledWith(chalk.yellow('- a'));
       });
+    });
 
-      it('should print a success message if no duplicates were found', async () => {
-        await _packageBuilder.Build(LOCATION);
+    it('should print a success message', async () => {
+      await _packageBuilder.Build(LOCATION);
 
-        expect(_consoleSpy).toHaveBeenCalledWith(
-          chalk.green('Package generation complete'));
-      });
+      expect(_consoleSpy).toHaveBeenCalledWith(
+        chalk.green('Package generation complete'));
     });
   });
 });
