@@ -73,7 +73,11 @@ export function findPreExistingFiles(locations: ICopyLocation[], variables: IKey
     const destFiles = glob.sync(`${location.destination}/**/*`, {nodir: true});
 
     destFiles.forEach((f) => {
-      const path = f.replace(location.destination, '');
+      let path = f.replace(location.destination, '');
+      if (path.charAt(0) !== '/') {
+        path = '/' + path;
+      }
+
       if (sourceFiles.includes(path)) {
         matches.push(f);
       }
