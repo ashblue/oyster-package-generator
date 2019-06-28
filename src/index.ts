@@ -1,5 +1,7 @@
 const gitRemoteOriginUrl = require('git-remote-origin-url');
+const shell = require('shelljs');
 
+import chalk from 'chalk';
 import * as inquirer from 'inquirer';
 import * as path from 'path';
 import {copyFolder, findPreExistingFiles} from './copy-folder/copy-folder';
@@ -25,4 +27,20 @@ async function runBuild() {
   ]);
 }
 
-runBuild();
+async function init() {
+  const buildStatus = await runBuild();
+  if (!buildStatus) {
+    return;
+  }
+
+  // tslint:disable-next-line:no-console
+  console.log(chalk.yellow('Installing dependencies, please wait. ' +
+    'May take several minutes depending upon connection...'));
+
+  shell.exec('npm install');
+
+  // tslint:disable-next-line:no-console
+  console.log(chalk.greenBright('Oyster package generator complete'));
+}
+
+init();
