@@ -87,7 +87,7 @@ For publishing builds and updating changelogs you'll need a GitHub [Personal Acc
 
 Add the key to Travis CI settings as `GH_TOKEN`.
 
-Cloud builds should automatically work and publish if everything was setup correctly.
+Cloud builds should automatically work and publish if everything was setup correctly. Not cloud builds don't start triggering till you've made commits to a branch.
 
 ### Concerning Commitlint
 
