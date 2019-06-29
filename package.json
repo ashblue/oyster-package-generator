@@ -9,7 +9,7 @@
     "build": "npm run lint && tsc",
     "start": "npm run build && node dist/index.js",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "publish": "npm run build && npm publish"
+    "publish": "npm run test && npm run build && npm publish"
   },
   "bin": {
     "oyster": "./bin/oyster"

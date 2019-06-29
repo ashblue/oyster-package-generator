@@ -2,7 +2,6 @@ import chalk from 'chalk';
 import {
   copyFolderType, findPreExistingFilesType,
   ICopyFolderOptions,
-  ICopyLocation,
   IKeyValuePair,
 } from '../copy-folder/copy-folder';
 import {GitDetector} from '../git-detector/git-detector';
@@ -25,14 +24,16 @@ export class PackageBuilder {
     this._gitDetector = gitDetector;
   }
 
-  public async Build(locations: ICopyLocation[]): Promise<boolean> {
+  public async Build(source: string, destination: string): Promise<boolean> {
     const isGitRepo = await this.verifyGitRepo();
     if (!isGitRepo) {
       return false;
     }
 
     const name = await this._terminal.askName();
-    const fileDuplicates = this._findPreExistingFiles(locations,
+    const fileDuplicates = this._findPreExistingFiles(
+      source,
+      destination,
       [{variable: 'name', value: name}]);
 
     if (fileDuplicates.length > 0) {
@@ -76,7 +77,8 @@ export class PackageBuilder {
     }
 
     const options: ICopyFolderOptions = {replaceVariables};
-    await this._copyFolder(locations, options);
+    // tslint:disable-next-line:no-console
+    await this._copyFolder(source, destination, options);
 
     this.printResultsMessage();
 

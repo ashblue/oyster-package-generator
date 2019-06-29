@@ -15,16 +15,10 @@ async function runBuild() {
   const packageBuilder = new PackageBuilder(
     copyFolder, findPreExistingFiles, terminal, gitDetector);
 
-  return packageBuilder.Build([
-    {
-      destination: 'Assets',
-      source: path.resolve(__dirname, '../src/templates/assets'),
-    },
-    {
-      destination: './',
-      source: path.resolve(__dirname, '../src/templates/root'),
-    },
-  ]);
+  return packageBuilder.Build(
+    path.resolve(__dirname, '../src/templates'),
+    './',
+  );
 }
 
 async function init() {
@@ -35,7 +29,7 @@ async function init() {
 
   // tslint:disable-next-line:no-console
   console.log(chalk.yellow('Installing dependencies, please wait. ' +
-    'May take several minutes depending upon connection...'));
+    'May take several minutes...'));
 
   shell.exec('npm install');
 

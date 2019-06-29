@@ -1,6 +1,6 @@
 import Mock = jest.Mock;
 import chalk from 'chalk';
-import {ICopyFolderResults, ICopyLocation, IKeyValuePair} from '../copy-folder/copy-folder';
+import {ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
 import {IGitDetails, IRepoStatus} from '../git-detector/git-detector';
 import {PackageBuilder} from './package-builder';
 
@@ -23,12 +23,8 @@ describe('PackageBuilder', () => {
     let _terminal: any;
     let _gitDetector: any;
 
-    const SOURCE = 'src/templates/assets';
-    const DESTINATION = 'dist/Assets';
-    const LOCATION: ICopyLocation[] = [{
-      destination: DESTINATION,
-      source: SOURCE,
-    }];
+    const SOURCE = 'src/templates';
+    const DESTINATION = 'tmp/package-builder-test';
 
     beforeEach(() => {
       _gitDetector = {
@@ -64,17 +60,21 @@ describe('PackageBuilder', () => {
 
     describe('standard run', () => {
       beforeEach(async () => {
-        await _packageBuilder.Build(LOCATION);
+        await _packageBuilder.Build(SOURCE, DESTINATION);
       });
 
       it('should give the copy folder a source and destination', async () => {
         expect(_copyFolder.mock.calls[0][0])
-          .toMatchObject(LOCATION);
+          .toEqual(SOURCE);
+
+        expect(_copyFolder.mock.calls[0][1])
+          .toEqual(DESTINATION);
+
       });
 
       it('should add a replace variable to copyFolder for packageScope', async () => {
         const match = findVariableMatch(
-          _copyFolder.mock.calls[0][1].replaceVariables,
+          _copyFolder.mock.calls[0][2].replaceVariables,
           'packageScope',
           'com.a');
 
@@ -83,7 +83,7 @@ describe('PackageBuilder', () => {
 
       it('should add a replace variable to copyFolder for year', async () => {
         const match = findVariableMatch(
-          _copyFolder.mock.calls[0][1].replaceVariables,
+          _copyFolder.mock.calls[0][2].replaceVariables,
           'year',
           new Date().getFullYear().toString());
 
@@ -107,16 +107,16 @@ describe('PackageBuilder', () => {
       }, {});
 
       _terminal.askQuestions.mockImplementation(() => Promise.resolve(answers));
-      await _packageBuilder.Build(LOCATION);
+      await _packageBuilder.Build(SOURCE, DESTINATION);
 
       const matchA = findVariableMatch(
-        _copyFolder.mock.calls[0][1].replaceVariables,
+        _copyFolder.mock.calls[0][2].replaceVariables,
         'name',
         name);
       expect(matchA).not.toBeUndefined();
 
       const matchB = findVariableMatch(
-        _copyFolder.mock.calls[0][1].replaceVariables,
+        _copyFolder.mock.calls[0][2].replaceVariables,
         replaceVariables[0].variable,
         replaceVariables[0].value);
       expect(matchB).not.toBeUndefined();
@@ -130,7 +130,7 @@ describe('PackageBuilder', () => {
       _gitDetector.getDetails
         .mockImplementation(() => Promise.resolve(results));
 
-      await _packageBuilder.Build(LOCATION);
+      await _packageBuilder.Build(SOURCE, DESTINATION);
 
       const replacements = Object.keys(results).map((key) => {
         return {
@@ -142,7 +142,7 @@ describe('PackageBuilder', () => {
 
       replacements.forEach((replace) => {
         const match = findVariableMatch(
-          _copyFolder.mock.calls[0][1].replaceVariables,
+          _copyFolder.mock.calls[0][2].replaceVariables,
           replace.variable,
           replace.value);
 
@@ -156,7 +156,7 @@ describe('PackageBuilder', () => {
         message: '',
       }));
 
-      await _packageBuilder.Build(LOCATION);
+      await _packageBuilder.Build(SOURCE, DESTINATION);
 
       expect(_terminal.askQuestions).not.toHaveBeenCalled();
     });
@@ -164,7 +164,7 @@ describe('PackageBuilder', () => {
     describe('duplicate files found', () => {
       beforeEach(async () => {
         _findPreExistingFiles.mockImplementation(() => ['a']);
-        await _packageBuilder.Build(LOCATION);
+        await _packageBuilder.Build(SOURCE, DESTINATION);
       });
 
       it('should ask for the name', async () => {
@@ -186,7 +186,7 @@ describe('PackageBuilder', () => {
     });
 
     it('should print a success message', async () => {
-      await _packageBuilder.Build(LOCATION);
+      await _packageBuilder.Build(SOURCE, DESTINATION);
 
       expect(_consoleSpy).toHaveBeenCalledWith(
         chalk.green('Package generation complete'));

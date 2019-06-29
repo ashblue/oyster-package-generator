@@ -3,11 +3,13 @@ import * as fs from 'fs';
 import {copyFolder, findPreExistingFiles} from './copy-folder';
 
 const TMP_ASSETS = 'tmp/assets';
-const DEST = 'tmp/dist/assets';
+const DEST = 'tmp/dist';
 
 beforeEach(() => {
-  del.sync('tmp');
+  del.sync(TMP_ASSETS);
+  del.sync(DEST);
   fs.mkdirSync(TMP_ASSETS, {recursive: true});
+  fs.mkdirSync(DEST, {recursive: true});
 });
 
 describe('findPreExistingFiles method', () => {
@@ -16,22 +18,48 @@ describe('findPreExistingFiles method', () => {
     fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
     fs.writeFileSync(`${DEST}/file.txt`, 'old');
 
-    const results = findPreExistingFiles([{
-      destination: DEST,
-      source: TMP_ASSETS,
-    }], []);
+    const results = findPreExistingFiles(
+      TMP_ASSETS,
+      DEST,
+      []);
 
     expect(results[0]).toContain('file.txt');
+  });
+
+  it('should detect pre-existing hidden files if they exist', async () => {
+    fs.mkdirSync(DEST, {recursive: true});
+    fs.writeFileSync(`${TMP_ASSETS}/.file.txt`, 'new');
+    fs.writeFileSync(`${DEST}/.file.txt`, 'old');
+
+    const results = findPreExistingFiles(
+      TMP_ASSETS,
+      DEST,
+      []);
+
+    expect(results[0]).toContain('.file.txt');
+  });
+
+  it('should skip ds store files', async () => {
+    fs.mkdirSync(DEST, {recursive: true});
+    fs.writeFileSync(`${TMP_ASSETS}/.DS_Store`, 'new');
+    fs.writeFileSync(`${DEST}/.DS_Store`, 'old');
+
+    const results = findPreExistingFiles(
+      TMP_ASSETS,
+      DEST,
+      []);
+
+    expect(results.length).toEqual(0);
   });
 
   it('should not return non-matching pre-existing files', async () => {
     fs.mkdirSync(DEST, {recursive: true});
     fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
 
-    const results = findPreExistingFiles([{
-      destination: DEST,
-      source: TMP_ASSETS,
-    }], []);
+    const results = findPreExistingFiles(
+      TMP_ASSETS,
+      DEST,
+      []);
 
     expect(results.length).toEqual(0);
   });
@@ -48,11 +76,8 @@ describe('findPreExistingFiles method', () => {
     fs.writeFileSync(destFile, 'old');
 
     const results = findPreExistingFiles(
-      [
-        {
-          destination: DEST,
-          source: TMP_ASSETS,
-        }],
+      TMP_ASSETS,
+      DEST,
       [
         {
           value: name,
@@ -67,10 +92,7 @@ describe('findPreExistingFiles method', () => {
 
 describe('copyFolder method', () => {
   it('should copy the folder to the appointed destination', async () => {
-    await copyFolder([{
-      destination: DEST,
-      source: TMP_ASSETS,
-    }]);
+    await copyFolder(TMP_ASSETS, DEST);
 
     expect(fs.existsSync(DEST)).toBeTruthy();
   });
@@ -78,48 +100,34 @@ describe('copyFolder method', () => {
   it('should copy files', async () => {
     fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'lorem ipsum');
 
-    await copyFolder([{
-      destination: DEST,
-      source: TMP_ASSETS,
-    }]);
+    await copyFolder(TMP_ASSETS, DEST);
 
     expect(fs.existsSync(`${DEST}/file.txt`)).toBeTruthy();
+  });
+
+  it('should copy hidden files', async () => {
+    fs.writeFileSync(`${TMP_ASSETS}/.file.txt`, 'lorem ipsum');
+
+    await copyFolder(TMP_ASSETS, DEST);
+
+    expect(fs.existsSync(`${DEST}/.file.txt`)).toBeTruthy();
   });
 
   it('should copy folders', async () => {
     fs.mkdirSync(`${TMP_ASSETS}/Runtime`);
 
-    await copyFolder([{
-      destination: DEST,
-      source: TMP_ASSETS,
-    }]);
+    await copyFolder(TMP_ASSETS, DEST);
 
     expect(fs.existsSync(`${DEST}/Runtime`)).toBeTruthy();
   });
 
   describe('variable renaming', () => {
-    it('should rename root folder with a given variable name', async () => {
-      fs.mkdirSync('tmp/{name}');
-
-      await copyFolder(
-        [{destination: 'tmp/dist/{name}', source: 'tmp/{name}'}],
-        {
-          replaceVariables: [
-            {
-              value: 'LoremIpsum',
-              variable: 'name',
-            },
-          ],
-        });
-
-      expect(fs.existsSync(`tmp/dist/LoremIpsum`)).toBeTruthy();
-    });
-
     it('should rename folders with a given variable name', async () => {
       fs.mkdirSync(`${TMP_ASSETS}/{name}`);
 
       await copyFolder(
-        [{destination: DEST, source: TMP_ASSETS}],
+        TMP_ASSETS,
+        DEST,
         {
         replaceVariables: [
           {
@@ -137,7 +145,8 @@ describe('copyFolder method', () => {
       fs.writeFileSync(`${TMP_ASSETS}/{name}/file.txt`, '{name}');
 
       await copyFolder(
-        [{destination: DEST, source: TMP_ASSETS}],
+        TMP_ASSETS,
+        DEST,
         {
           replaceVariables: [
             {
@@ -154,7 +163,8 @@ describe('copyFolder method', () => {
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}');
 
       await copyFolder(
-        [{destination: DEST, source: TMP_ASSETS}],
+        TMP_ASSETS,
+        DEST,
         {
           replaceVariables: [
             {
@@ -169,12 +179,34 @@ describe('copyFolder method', () => {
       expect(contents).toContain('LoremIpsum');
     });
 
-    it('should replace multiple variable in any discovered text files', async () => {
+    it('should not replace variables in text files that are not from the source', async () => {
+      fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}');
+      fs.writeFileSync(`${DEST}/old.txt`, '{name}');
+
+      await copyFolder(
+        TMP_ASSETS,
+        DEST,
+        {
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
+
+      const contents = fs.readFileSync(`${DEST}/old.txt`).toString();
+
+      expect(contents).toContain('{name}');
+    });
+
+    it('should replace multiple variables in any discovered text files', async () => {
       const nameValue = 'LoremIpsum';
       fs.writeFileSync(`${TMP_ASSETS}/file.txt`, '{name}{name}');
 
       await copyFolder(
-        [{destination: DEST, source: TMP_ASSETS}],
+        TMP_ASSETS,
+        DEST,
         {
           replaceVariables: [
             {
