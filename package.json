@@ -8,8 +8,7 @@
     "test:watch": "npm run lint && jest --watch",
     "build": "npm run lint && tsc",
     "start": "npm run build && node dist/index.js",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "publish": "npm run test && npm run build && npm publish"
+    "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "bin": {
     "oyster": "./bin/oyster"
