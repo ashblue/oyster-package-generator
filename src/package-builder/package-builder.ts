@@ -54,6 +54,11 @@ export class PackageBuilder {
         value: new Date().getFullYear().toString(),
         variable: 'year',
       },
+      // Because NPM doesn't include .gitignore files
+      {
+        value: '.gitignore',
+        variable: 'gitignore',
+      },
     ];
 
     const gitDetails = await this._gitDetector.getDetails();

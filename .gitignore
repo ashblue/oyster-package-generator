@@ -87,6 +87,9 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+# IDEs
+.idea
+
 # Project Specific
 tmp/
 dist/

@@ -140,6 +140,24 @@ describe('copyFolder method', () => {
       expect(fs.existsSync(`${DEST}/LoremIpsum`)).toBeTruthy();
     });
 
+    it('should rename files with a given variable name', async () => {
+      fs.writeFileSync(`${TMP_ASSETS}/{name}.txt`, 'Lorem Ipsum');
+
+      await copyFolder(
+        TMP_ASSETS,
+        DEST,
+        {
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
+
+      expect(fs.existsSync(`${DEST}/LoremIpsum.txt`)).toBeTruthy();
+    });
+
     it('should not fail when renaming nested folders', async () => {
       fs.mkdirSync(`${TMP_ASSETS}/{name}`);
       fs.writeFileSync(`${TMP_ASSETS}/{name}/file.txt`, '{name}');

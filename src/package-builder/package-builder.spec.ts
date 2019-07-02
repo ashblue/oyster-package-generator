@@ -81,6 +81,15 @@ describe('PackageBuilder', () => {
         expect(match).not.toBeUndefined();
       });
 
+      it('should add a replace variable to copyFolder for .gitignore', async () => {
+        const match = findVariableMatch(
+          _copyFolder.mock.calls[0][2].replaceVariables,
+          'gitignore',
+          '.gitignore');
+
+        expect(match).not.toBeUndefined();
+      });
+
       it('should add a replace variable to copyFolder for year', async () => {
         const match = findVariableMatch(
           _copyFolder.mock.calls[0][2].replaceVariables,
