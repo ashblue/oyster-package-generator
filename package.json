@@ -9,7 +9,8 @@
     "build": "npm run lint && tsc",
     "start": "npm run build && node dist/index.js",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "commit": "git-cz"
   },
   "bin": {
     "oyster": "./bin/oyster"
@@ -17,17 +18,19 @@
   "author": "Ash Blue",
   "license": "MIT",
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
     "@types/del": "^4.0.0",
     "@types/glob": "^7.1.1",
     "@types/inquirer": "^6.0.3",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.0.10",
-    "@types/chalk": "^2.2.0",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
     "jest": "^24.8.0",
+    "semantic-release": "^15.13.21",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.2",
-    "semantic-release": "^15.13.21"
+    "typescript": "^3.5.2"
   },
   "dependencies": {
     "chalk": "^2.4.2",
@@ -52,5 +55,10 @@
   "bugs": {
     "url": "https://github.com/ashblue/oyster-package-generator/issues"
   },
-  "homepage": "https://github.com/ashblue/oyster-package-generator#readme"
+  "homepage": "https://github.com/ashblue/oyster-package-generator#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

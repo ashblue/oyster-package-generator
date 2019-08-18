@@ -1,5 +1,7 @@
 # Oyster Package Generator
 
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
 Setting up a Unity Package Manger project with cloud builds, automated version numbers, and documentation can take several hours. Oyster Package Generator creates all of this for you by answering a few simple questions about your project.
 
 ![Oyster Package Generator CLI](src/images/cli-example.png)
@@ -47,9 +49,9 @@ oyster
 
 You're done. If you want to [setup cloud builds](#setting-up-cloud-builds) you'll need to do a few extra things.
 
-### Making commits
+### Making commits to your project
 
-All commits should be made with the following command. This project uses [Commitizen](https://github.com/commitizen/cz-cli) and enforces syntax via [Commitlint](https://commitlint.js.org).
+All commits should be made with the following command. Your project will use [Commitizen](https://github.com/commitizen/cz-cli) and enforce syntax via [Commitlint](https://commitlint.js.org).
 
 ```bash
 npm run commit
