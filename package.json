@@ -25,6 +25,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
+    "@commitlint/travis-cli": "^8.1.0",
     "@types/chalk": "^2.2.0",
     "@types/del": "^4.0.0",
     "@types/glob": "^7.1.1",
