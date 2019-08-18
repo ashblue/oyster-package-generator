@@ -1,6 +1,6 @@
 {
   "name": "oyster-package-generator",
-  "version": "0.1.2",
+  "version": "0.0.0-development",
   "description": "CLI to automatically generate a Unity Package Manager project",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,14 @@
     "test:watch": "npm run lint && jest --watch",
     "build": "npm run lint && tsc",
     "start": "npm run build && node dist/index.js",
-    "lint": "tslint -c tslint.json -p tsconfig.json"
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "semantic-release": "semantic-release",
+    "commit": "git-cz"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   },
   "bin": {
     "oyster": "./bin/oyster"
@@ -16,13 +23,27 @@
   "author": "Ash Blue",
   "license": "MIT",
   "devDependencies": {
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
+    "@commitlint/travis-cli": "^8.1.0",
+    "@semantic-release/changelog": "^3.0.4",
+    "@semantic-release/commit-analyzer": "^6.3.0",
+    "@semantic-release/exec": "^3.3.6",
+    "@semantic-release/git": "^7.0.16",
+    "@semantic-release/github": "^5.4.2",
+    "@semantic-release/npm": "^5.1.13",
+    "@semantic-release/release-notes-generator": "^7.3.0",
+    "@types/chalk": "^2.2.0",
     "@types/del": "^4.0.0",
     "@types/glob": "^7.1.1",
     "@types/inquirer": "^6.0.3",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.0.10",
-    "@types/chalk": "^2.2.0",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "husky": "^3.0.4",
     "jest": "^24.8.0",
+    "semantic-release": "^15.13.21",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
     "typescript": "^3.5.2"
@@ -38,7 +59,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ashblue/oyster-package-generator.git"
+    "url": "https://github.com/ashblue/oyster-package-generator.git"
   },
   "keywords": [
     "unity",
@@ -50,5 +71,10 @@
   "bugs": {
     "url": "https://github.com/ashblue/oyster-package-generator/issues"
   },
-  "homepage": "https://github.com/ashblue/oyster-package-generator#readme"
+  "homepage": "https://github.com/ashblue/oyster-package-generator#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
