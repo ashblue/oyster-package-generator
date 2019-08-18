@@ -10,7 +10,7 @@ Features
 * Automatically generates the standard Unity [package structure](https://docs.unity3d.com/Manual/cus-layout.html) for you and populates the package.json
 * Version numbers are automatically created from your commits
 * Auto-deploying nightly builds as you make commits
-* Changelogs are generated from commits
+* Change logs are generated from commits
 * Package generator creates general documentation to use your app
 * Allows you to work inside a Unity project without cloning nested repos in `Assets`
 

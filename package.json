@@ -1,6 +1,6 @@
 {
   "name": "oyster-package-generator",
-  "version": "0.1.2",
+  "version": "0.0.0-development",
   "description": "CLI to automatically generate a Unity Package Manager project",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "test:watch": "npm run lint && jest --watch",
     "build": "npm run lint && tsc",
     "start": "npm run build && node dist/index.js",
-    "lint": "tslint -c tslint.json -p tsconfig.json"
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "semantic-release": "semantic-release"
   },
   "bin": {
     "oyster": "./bin/oyster"
@@ -25,7 +26,8 @@
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "semantic-release": "^15.13.21"
   },
   "dependencies": {
     "chalk": "^2.4.2",
@@ -38,7 +40,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ashblue/oyster-package-generator.git"
+    "url": "https://github.com/ashblue/oyster-package-generator.git"
   },
   "keywords": [
     "unity",
