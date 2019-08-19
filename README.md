@@ -73,15 +73,26 @@ Oyster Package Generator automatically includes an MIT license in the project. Y
 
 For cloud builds Oyster uses [Travis CI](https://travis-ci.com/). You'll need to head there, create an account, and enable your repo. Make sure you've checked in the code Oyster generated for you as `.travis.yml` in the root is required for your repo to start building.
 
-To get builds automatically deploying we'll need to create an NPM and GitHub token.
+### The easy way
 
-### Creating the NPM key
+Oyster package manager is compatible with [semantic-release-cli](). Run the following commands from the root of your project, fill in the questions, and your keys will automatically be configured.
+
+```bash
+npm install -g semantic-release-cli
+semantic-release-cli setup
+```
+
+### The hard way
+
+This will take a while but you can manually configure your cloud deploy keys. To get builds automatically deploying you'll need an NPM, GitHub, and Travis CI account before proceeding to the next step.
+
+#### Creating the NPM key
 
 To publish to NPM we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens). You must have an [npm](https://www.npmjs.com) account and generate a token. 
 
 Add the key to your Travis CI settings [environment variables](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) as `NPM_TOKEN`.
 
-### Creating the GitHub key
+#### Creating the GitHub key
 
 For publishing builds and updating changelogs you'll need a GitHub [Personal Access Token](https://github.com/settings/tokens). Your token should look like this.
 
