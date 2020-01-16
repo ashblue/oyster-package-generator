@@ -24,9 +24,23 @@ Join the [Discord Community](https://discord.gg/8QHFfzn) if you have questions o
 
 In order to use Oyster Package Generator you'll need the following.
 
+* A Mac OS, due to various Linux install scripts this does now work on Windows machines
 * [Git](https://git-scm.com/) installed
 * [Node.js](https://nodejs.org/en/) installed
 * [GitHub](https://github.com/) account (uses GitHub specific publishing features)
+
+## Quick Start
+
+If you don't care about all the granular details just do the following.
+
+1. Create an empty Unity repo (navigate to the root folder)
+1. Run `npm init` to prep everything for Git
+1. Run `git remote add origin git@github.com:ashblue/YOUR_REPO.git`. Replace `YOUR_REPO` with the proper repo URL. This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
+1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
+1. Run `npm install -g semantic-release-cli`
+1. Then run `semantic-release-cli setup` and answer the prompts. This will setup cloud deployments for you
+
+Once setup all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
 
 ## Running the CLI
 
