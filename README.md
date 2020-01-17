@@ -34,7 +34,7 @@ In order to use Oyster Package Generator you'll need the following.
 If you don't care about all the granular details just do the following.
 
 1. Create an empty Unity repo (navigate to the root folder)
-1. Run `npm init` to prep everything for Git
+1. Run `git init` to prep everything for Git
 1. Run `git remote add origin git@github.com:ashblue/YOUR_REPO.git`. Replace `YOUR_REPO` with the proper repo URL. This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
 1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
 1. Run `npm install -g semantic-release-cli`
