@@ -39,6 +39,7 @@ If you don't care about all the granular details just do the following.
 1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
 1. Run `npm install -g semantic-release-cli`
 1. Then run `semantic-release-cli setup` and answer the prompts. This will setup cloud deployments for you
+    1. Note that the setup may try to overwrite your `semantic-release` package version in `package.json` with an experimental one. I recommend hard setting the version number to `"semantic-release": "^15.14.0"` to prevent deployment issues after running this
 
 Once setup all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
 
