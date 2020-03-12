@@ -35,10 +35,11 @@ If you don't care about all the granular details just do the following.
 
 1. Create an empty Unity repo (navigate to the root folder)
 1. Run `git init` to prep everything for Git
-1. Run `git remote add origin git@github.com:ashblue/YOUR_REPO.git`. Replace `YOUR_REPO` with the proper repo URL. This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
+1. Run `git remote add origin YOUR_REPO`. Replace `YOUR_REPO` with the proper repo URL (such as git@github.com:ashblue/oyster-package-generator.git). This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
 1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
 1. Run `npm install -g semantic-release-cli`
 1. Then run `semantic-release-cli setup` and answer the prompts. This will setup cloud deployments for you
+    1. If Travis CI errors make sure that it shows up on the site (might have to manually enable it)
     1. Note that the setup may try to overwrite your `semantic-release` package version in `package.json` with an experimental one. I recommend hard setting the version number to `"semantic-release": "^15.14.0"` to prevent deployment issues after running this
 
 Once setup all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
