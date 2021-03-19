@@ -1,9 +1,8 @@
-const copyDir = require('copy-dir');
-
-import * as del from 'del';
 import * as fs from 'fs';
-import * as glob from 'glob';
 import * as nodePath from 'path';
+import * as glob from 'glob';
+import * as del from 'del';
+import fse from 'fs-extra';
 
 const TMP_PATH = nodePath.resolve(__dirname, '../../tmp/build');
 
@@ -20,17 +19,17 @@ export interface ICopyFolderResults {
   skippedFilePaths: string[];
 }
 
-export type copyFolderType = (
+export type CopyFolderType = (
   source: string,
   destination: string,
   options?: ICopyFolderOptions) => Promise<void>;
 
-export type findPreExistingFilesType = (
+export type FindPreExistingFilesType = (
   source: string,
   destination: string,
   variables: IKeyValuePair[]) => string[];
 
-function renameFileWithVariables(path: string, variables: IKeyValuePair[] | undefined): string {
+const renameFileWithVariables = (path: string, variables: IKeyValuePair[] | undefined): string => {
   if (!path.includes('{') || !path.includes('}')) {
     return path;
   }
@@ -46,9 +45,9 @@ function renameFileWithVariables(path: string, variables: IKeyValuePair[] | unde
   fs.renameSync(path, newPath);
 
   return newPath;
-}
+};
 
-function replaceVariables(text: string, variables: IKeyValuePair[]): string {
+const replaceVariables = (text: string, variables: IKeyValuePair[]): string => {
   let newText = text;
   variables.forEach((r) => {
     const matches = new RegExp(`{${r.variable}}`, 'g');
@@ -56,9 +55,9 @@ function replaceVariables(text: string, variables: IKeyValuePair[]): string {
   });
 
   return newText;
-}
+};
 
-function replaceFileContents(path: string, variables: IKeyValuePair[] | undefined) {
+const replaceFileContents = (path: string, variables: IKeyValuePair[] | undefined) => {
   if (!variables) {
     return;
   }
@@ -71,13 +70,13 @@ function replaceFileContents(path: string, variables: IKeyValuePair[] | undefine
   const newText = replaceVariables(text, variables);
 
   fs.writeFileSync(path, newText);
-}
+};
 
-export function findPreExistingFiles(
+export const findPreExistingFiles = (
   source: string,
   destination: string,
-  variables: IKeyValuePair[]) {
-
+  variables: IKeyValuePair[]
+): string[] => {
   const matches: string[] = [];
   const sourceFiles = glob.sync(`${source}/**/*`, {nodir: true, dot: true})
     .filter((f) => !f.includes('.DS_Store'))
@@ -100,16 +99,16 @@ export function findPreExistingFiles(
   });
 
   return matches;
-}
+};
 
-async function copyFilesWithVariables(source: string, destination: string, options: ICopyFolderOptions) {
+const copyFilesWithVariables = async (source: string, destination: string, options: ICopyFolderOptions) => {
   await del.default(TMP_PATH, {force: true});
 
   fs.mkdirSync(destination, {recursive: true});
-  copyDir.sync(source, destination, {cover: false});
+  fse.copySync(source, destination);
 
   const destinationPaths = glob.sync(`${destination}/**/*`, {dot: true});
-  const replaceMatches: Array<{ key: string, value: string }> = [];
+  const replaceMatches: Array<{ key: string; value: string }> = [];
   destinationPaths.forEach((path) => {
 
     replaceMatches.forEach((match) => {
@@ -125,14 +124,15 @@ async function copyFilesWithVariables(source: string, destination: string, optio
 
     replaceFileContents(newPath, options.replaceVariables);
   });
-}
+};
 
-export async function copyFolder(
+export const copyFolder = async (
   source: string,
   destination: string,
-  options: ICopyFolderOptions = {replaceVariables: []}): Promise<void> {
+  options: ICopyFolderOptions = {replaceVariables: []}
+): Promise<void> => {
 
   await copyFilesWithVariables(source, TMP_PATH, options);
 
-  copyDir.sync(TMP_PATH, destination, {cover: false});
-}
+  fse.copySync(TMP_PATH, destination);
+};

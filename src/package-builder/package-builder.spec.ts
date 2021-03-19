@@ -1,18 +1,15 @@
-import Mock = jest.Mock;
 import chalk from 'chalk';
 import {ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
 import {IGitDetails, IRepoStatus} from '../git-detector/git-detector';
 import {PackageBuilder} from './package-builder';
+import Mock = jest.Mock;
 
-function findVariableMatch(variables: IKeyValuePair[], variable: string, value: string): IKeyValuePair | undefined {
-  return variables.find((v: IKeyValuePair) => {
-    if (v.variable === variable && v.value === value) {
-      return true;
-    }
-
-    return false;
-  });
-}
+const findVariableMatch = (
+  variables: IKeyValuePair[],
+  variable: string,
+  value: string,
+): IKeyValuePair | undefined =>
+  variables.find((v: IKeyValuePair) => v.variable === variable && v.value === value);
 
 describe('PackageBuilder', () => {
   describe('Build method', () => {
@@ -60,20 +57,23 @@ describe('PackageBuilder', () => {
 
     describe('standard run', () => {
       beforeEach(async () => {
-        await _packageBuilder.Build(SOURCE, DESTINATION);
+        await _packageBuilder.build(SOURCE, DESTINATION);
       });
 
-      it('should give the copy folder a source and destination', async () => {
+      it('should give the copy folder a source and destination',  () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         expect(_copyFolder.mock.calls[0][0])
           .toEqual(SOURCE);
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         expect(_copyFolder.mock.calls[0][1])
           .toEqual(DESTINATION);
 
       });
 
-      it('should add a replace variable to copyFolder for packageScope', async () => {
+      it('should add a replace variable to copyFolder for packageScope', () => {
         const match = findVariableMatch(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           _copyFolder.mock.calls[0][2].replaceVariables,
           'packageScope',
           'com.a');
@@ -81,8 +81,9 @@ describe('PackageBuilder', () => {
         expect(match).not.toBeUndefined();
       });
 
-      it('should add a replace variable to copyFolder for .gitignore', async () => {
+      it('should add a replace variable to copyFolder for .gitignore', () => {
         const match = findVariableMatch(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           _copyFolder.mock.calls[0][2].replaceVariables,
           'gitignore',
           '.gitignore');
@@ -90,8 +91,9 @@ describe('PackageBuilder', () => {
         expect(match).not.toBeUndefined();
       });
 
-      it('should add a replace variable to copyFolder for year', async () => {
+      it('should add a replace variable to copyFolder for year', () => {
         const match = findVariableMatch(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           _copyFolder.mock.calls[0][2].replaceVariables,
           'year',
           new Date().getFullYear().toString());
@@ -101,7 +103,9 @@ describe('PackageBuilder', () => {
     });
 
     it('should combine terminal answers as variable replacement options on copyFolder', async () => {
-      const name = await _terminal.askName();
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+      const name: string = await _terminal.askName();
       const replaceVariables: IKeyValuePair[] = [
         {
           value: 'a',
@@ -109,22 +113,24 @@ describe('PackageBuilder', () => {
         },
       ];
 
-      const answers = replaceVariables.reduce((map, obj) => {
-        // @ts-ignore
+      const answers = replaceVariables.reduce((map: {[key: string]: any}, obj) => {
         map[obj.variable] = obj.value;
         return map;
       }, {});
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       _terminal.askQuestions.mockImplementation(() => Promise.resolve(answers));
-      await _packageBuilder.Build(SOURCE, DESTINATION);
+      await _packageBuilder.build(SOURCE, DESTINATION);
 
       const matchA = findVariableMatch(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         _copyFolder.mock.calls[0][2].replaceVariables,
         'name',
         name);
       expect(matchA).not.toBeUndefined();
 
       const matchB = findVariableMatch(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         _copyFolder.mock.calls[0][2].replaceVariables,
         replaceVariables[0].variable,
         replaceVariables[0].value);
@@ -136,21 +142,21 @@ describe('PackageBuilder', () => {
         gitUrl: 'a',
         gitUrlNoHttp: 'b',
       };
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       _gitDetector.getDetails
         .mockImplementation(() => Promise.resolve(results));
 
-      await _packageBuilder.Build(SOURCE, DESTINATION);
+      await _packageBuilder.build(SOURCE, DESTINATION);
 
-      const replacements = Object.keys(results).map((key) => {
-        return {
-          // @ts-ignore
-          value: results[key],
-          variable: key,
-        } as IKeyValuePair;
-      });
+      const replacements = Object.keys(results).map((key) => ({
+        value: results[key],
+        variable: key,
+      } as IKeyValuePair));
 
       replacements.forEach((replace) => {
         const match = findVariableMatch(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           _copyFolder.mock.calls[0][2].replaceVariables,
           replace.variable,
           replace.value);
@@ -160,42 +166,46 @@ describe('PackageBuilder', () => {
     });
 
     it('should not ask questions if the repo is not a git repository', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       _gitDetector.checkIfGitRepo.mockImplementation(() => Promise.resolve({
         isGitRepo: false,
         message: '',
       }));
 
-      await _packageBuilder.Build(SOURCE, DESTINATION);
+      await _packageBuilder.build(SOURCE, DESTINATION);
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(_terminal.askQuestions).not.toHaveBeenCalled();
     });
 
     describe('duplicate files found', () => {
       beforeEach(async () => {
         _findPreExistingFiles.mockImplementation(() => ['a']);
-        await _packageBuilder.Build(SOURCE, DESTINATION);
+        await _packageBuilder.build(SOURCE, DESTINATION);
       });
 
-      it('should ask for the name', async () => {
+      it('should ask for the name', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         expect(_terminal.askName).toHaveBeenCalled();
       });
 
-      it('should not ask full questions', async () => {
+      it('should not ask full questions', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         expect(_terminal.askQuestions).not.toHaveBeenCalled();
       });
 
-      it('should print a message that duplicate files were found', async () => {
+      it('should print a message that duplicate files were found', () => {
         expect(_consoleSpy).toHaveBeenCalledWith(
           chalk.yellow('Files discovered with matching names.'));
       });
 
-      it('should print all duplicate files found', async () => {
+      it('should print all duplicate files found', () => {
         expect(_consoleSpy).toHaveBeenCalledWith(chalk.yellow('- a'));
       });
     });
 
     it('should print a success message', async () => {
-      await _packageBuilder.Build(SOURCE, DESTINATION);
+      await _packageBuilder.build(SOURCE, DESTINATION);
 
       expect(_consoleSpy).toHaveBeenCalledWith(
         chalk.green('Package generation complete'));
