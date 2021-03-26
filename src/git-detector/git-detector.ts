@@ -1,4 +1,5 @@
 export interface IGitDetails {
+  [key: string]: string;
   gitUrlNoHttp: string;
   gitUrl: string;
 }
@@ -9,9 +10,9 @@ export interface IRepoStatus {
 }
 
 export class GitDetector {
-  private readonly _gitRemoteOriginUrl: any;
+  private readonly _gitRemoteOriginUrl: () => Promise<string>;
 
-  constructor(gitRemoteOriginUrl: Promise<string>) {
+  constructor(gitRemoteOriginUrl: () => Promise<string>) {
     this._gitRemoteOriginUrl = gitRemoteOriginUrl;
   }
 
@@ -21,9 +22,11 @@ export class GitDetector {
 
     try {
       await this._gitRemoteOriginUrl();
-    } catch (e) {
+    } catch (e: any) {
       isGitRepo = false;
-      message = e;
+      if (typeof e === 'string') {
+        message = e;
+      }
     }
 
     return {

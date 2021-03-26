@@ -2,21 +2,23 @@ import chalk from 'chalk';
 import { Inquirer, Question } from 'inquirer';
 
 export interface IQuestionsToAnswers {
+  [key: string]: string;
   displayName: string;
   description: string;
   version: string;
   keywords: string;
+  name: string;
 }
 
 export class Terminal {
-  public static requiredString(value: string): boolean {
-    return value.trim() !== '';
-  }
-
   private _inquirer: Inquirer;
 
-  public constructor(inquirer: Inquirer) {
+  constructor(inquirer: Inquirer) {
     this._inquirer = inquirer;
+  }
+
+  public static requiredString(value: string): boolean {
+    return value.trim() !== '';
   }
 
   public async askName(): Promise<string> {
@@ -26,7 +28,7 @@ export class Terminal {
       ],
     );
 
-    return question.name;
+    return question.name as string;
   }
 
   public async askQuestions(): Promise<IQuestionsToAnswers> {
@@ -67,7 +69,7 @@ export class Terminal {
       message: `Package name? Internal ID that's permanent. Example ${packageNameFormat} or ${packageNameExample}`,
       name: 'name',
       type: 'input',
-      validate: Terminal.requiredString,
+      validate: (value) => Terminal.requiredString(value),
     };
   }
 
@@ -79,13 +81,13 @@ export class Terminal {
       message: `Package display name? Should be user-friendly. Example ${example} or ${exampleAlt}`,
       name: 'displayName',
       type: 'input',
-      validate: Terminal.requiredString,
+      validate: (value) => Terminal.requiredString(value),
     };
   }
 
   private questionDescription(): Question {
     return {
-      message: `Package description?. Will appear in the package manager window`,
+      message: 'Package description?. Will appear in the package manager window',
       name: 'description',
       type: 'input',
     };
@@ -103,7 +105,7 @@ export class Terminal {
 
   private questionAuthorName(): Question {
     return {
-      message: `What is the author's name?`,
+      message: 'What is the author\'s name?',
       name: 'authorName',
       type: 'input',
     };
@@ -111,7 +113,7 @@ export class Terminal {
 
   private questionAuthorEmail(): Question {
     return {
-      message: `What is the author's email?`,
+      message: 'What is the author\'s email?',
       name: 'authorEmail',
       type: 'input',
     };
@@ -119,7 +121,7 @@ export class Terminal {
 
   private questionAuthorUrl(): Question {
     return {
-      message: `What is the author's url?`,
+      message: 'What is the author\'s url?',
       name: 'authorUrl',
       type: 'input',
     };
@@ -127,7 +129,7 @@ export class Terminal {
 
   private questionKeywords(): Question {
     return {
-      message: `Keywords that identify this package. Please separate with a comma`,
+      message: 'Keywords that identify this package. Please separate with a comma',
       name: 'keywords',
       type: 'input',
     };

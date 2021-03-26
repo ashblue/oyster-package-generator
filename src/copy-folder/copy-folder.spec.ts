@@ -1,5 +1,5 @@
-import * as del from 'del';
 import * as fs from 'fs';
+import * as del from 'del';
 import {copyFolder, findPreExistingFiles} from './copy-folder';
 
 const TMP_ASSETS = 'tmp/assets';
@@ -13,7 +13,7 @@ beforeEach(() => {
 });
 
 describe('findPreExistingFiles method', () => {
-  it('should detect pre-existing files if they exist', async () => {
+  it('should detect pre-existing files if they exist', () => {
     fs.mkdirSync(DEST, {recursive: true});
     fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
     fs.writeFileSync(`${DEST}/file.txt`, 'old');
@@ -26,7 +26,7 @@ describe('findPreExistingFiles method', () => {
     expect(results[0]).toContain('file.txt');
   });
 
-  it('should detect pre-existing hidden files if they exist', async () => {
+  it('should detect pre-existing hidden files if they exist', () => {
     fs.mkdirSync(DEST, {recursive: true});
     fs.writeFileSync(`${TMP_ASSETS}/.file.txt`, 'new');
     fs.writeFileSync(`${DEST}/.file.txt`, 'old');
@@ -39,7 +39,7 @@ describe('findPreExistingFiles method', () => {
     expect(results[0]).toContain('.file.txt');
   });
 
-  it('should skip ds store files', async () => {
+  it('should skip ds store files', () => {
     fs.mkdirSync(DEST, {recursive: true});
     fs.writeFileSync(`${TMP_ASSETS}/.DS_Store`, 'new');
     fs.writeFileSync(`${DEST}/.DS_Store`, 'old');
@@ -52,7 +52,7 @@ describe('findPreExistingFiles method', () => {
     expect(results.length).toEqual(0);
   });
 
-  it('should not return non-matching pre-existing files', async () => {
+  it('should not return non-matching pre-existing files', () => {
     fs.mkdirSync(DEST, {recursive: true});
     fs.writeFileSync(`${TMP_ASSETS}/file.txt`, 'new');
 
@@ -64,7 +64,7 @@ describe('findPreExistingFiles method', () => {
     expect(results.length).toEqual(0);
   });
 
-  it('should never replace pre-existing files with variable injection', async () => {
+  it('should never replace pre-existing files with variable injection', () => {
     const name = 'LoremIpsum';
     const sourcePath = `${TMP_ASSETS}/{name}`;
     const destPath = `${DEST}/${name}`;
@@ -129,13 +129,13 @@ describe('copyFolder method', () => {
         TMP_ASSETS,
         DEST,
         {
-        replaceVariables: [
-          {
-            value: 'LoremIpsum',
-            variable: 'name',
-          },
-        ],
-      });
+          replaceVariables: [
+            {
+              value: 'LoremIpsum',
+              variable: 'name',
+            },
+          ],
+        });
 
       expect(fs.existsSync(`${DEST}/LoremIpsum`)).toBeTruthy();
     });

@@ -1,40 +1,41 @@
-const gitRemoteOriginUrl = require('git-remote-origin-url');
-const shell = require('shelljs');
-
+import * as path from 'path';
 import chalk from 'chalk';
 import * as inquirer from 'inquirer';
-import * as path from 'path';
 import {copyFolder, findPreExistingFiles} from './copy-folder/copy-folder';
 import {GitDetector} from './git-detector/git-detector';
 import {PackageBuilder} from './package-builder/package-builder';
 import {Terminal} from './terminal/terminal';
 
-async function runBuild() {
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const shell = require('shelljs');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const gitRemoteOriginUrl = require('git-remote-origin-url');
+
+const runBuild = async () => {
   const terminal = new Terminal(inquirer);
   const gitDetector = new GitDetector(gitRemoteOriginUrl);
   const packageBuilder = new PackageBuilder(
     copyFolder, findPreExistingFiles, terminal, gitDetector);
 
-  return packageBuilder.Build(
+  return packageBuilder.build(
     path.resolve(__dirname, '../src/templates'),
     './',
   );
-}
+};
 
-async function init() {
+const init = async () => {
   const buildStatus = await runBuild();
   if (!buildStatus) {
     return;
   }
 
-  // tslint:disable-next-line:no-console
   console.log(chalk.yellow('Installing dependencies, please wait. ' +
     'May take several minutes...'));
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
   shell.exec('npm install');
 
-  // tslint:disable-next-line:no-console
   console.log(chalk.greenBright('Oyster package generator complete'));
-}
+};
 
-init();
+void init();
