@@ -10,8 +10,8 @@
         "prepareCmd": "npm run build"
       }
     ],
-    "@semantic-release/git",
     "@semantic-release/npm",
+    "@semantic-release/git",
     "@semantic-release/github"
   ]
 }

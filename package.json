@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "build": "tsc",
     "start": "npm run build && node dist/index.js",
     "lint": "eslint src --ext .js,.ts --max-warnings 0",
