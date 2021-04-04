@@ -6,7 +6,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*',
   ],
-  coverageDirectory: "dist/coverage",
+  coverageDirectory: "coverage",
   coverageThreshold: {
     global: {
       branches: 78,
