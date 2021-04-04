@@ -7,7 +7,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "start": "npm run build && node dist/index.js",
     "lint": "eslint src --ext .js,.ts --max-warnings 0",
     "semantic-release": "semantic-release",
