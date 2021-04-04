@@ -61,6 +61,10 @@ To make a commit type the following into a terminal from the root.
 npm run commit
 ```
 
+### How To Contribute
+
+Please see the [CONTRIBUTIONS.md](./CONTRIBUTING.md) file for full details on how to contribute to this project.
+
 ---
 
 This project was generated with [Oyster Package Generator](https://github.com/ashblue/oyster-package-generator).
