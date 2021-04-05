@@ -39,7 +39,8 @@ If you don't care about all the granular details just do the following.
 1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
 1. Install Semantic Release for cloud deploys
     1. Run `npm install -g semantic-release-cli`
-    1. Then run `semantic-release-cli setup` and answer the prompts to setup Travis CI. This will setup cloud deployments for you
+    1. Then run `semantic-release-cli setup` and answer the prompts to setup GitHub Actions. This will setup cloud deployments for you
+1. Set your default GitHub branch to `develop` instead of `master`. While not required, this will make pull requests and maintaining your repo easier
 
 Once setup all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
 
@@ -92,11 +93,11 @@ https://trello.com/b/Z9P0XMl6/oyster-package-generator
 
 ## Setting up cloud builds
 
-For cloud builds Oyster uses [Travis CI](https://travis-ci.com/). You'll need to head there, create an account, and enable your repo. Make sure you've checked in the code Oyster generated for you as `.travis.yml` in the root is required for your repo to start building.
+Cloud and nightly builds are done with GitHub actions. If you're running a GitHub project you only need to add an NPM token.
 
-### The easy way
+### The quick way
 
-Oyster package manager is compatible with [semantic-release-cli](https://github.com/semantic-release/cli). Run the following commands from the root of your project, fill in the questions, and your keys will automatically be configured.
+Oyster package manager is compatible with [semantic-release-cli](https://github.com/semantic-release/cli). Run the following commands from the root of your project, fill in the questions, choose GitHub actions, and your keys will automatically be configured.
 
 ```bash
 npm install -g semantic-release-cli
@@ -105,27 +106,9 @@ semantic-release-cli setup
 
 ### The hard way
 
-This will take a while but you can manually configure your cloud deploy keys. To get builds automatically deploying you'll need an NPM, GitHub, and Travis CI account before proceeding to the next step.
+To get builds automatically deploying you'll need an NPM token. To get one we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens). You must have an [npm](https://www.npmjs.com) account to generate a token. 
 
-#### Creating the NPM key
-
-To publish to NPM we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens). You must have an [npm](https://www.npmjs.com) account and generate a token. 
-
-Add the key to your Travis CI settings [environment variables](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) as `NPM_TOKEN`.
-
-#### Creating the GitHub key
-
-For publishing builds and updating changelogs you'll need a GitHub [Personal Access Token](https://github.com/settings/tokens). Your token should look like this.
-
-![GitHub Token Example](src/images/github-token.png)
-
-Add the key to Travis CI settings as `GH_TOKEN`.
-
-Cloud builds should automatically work and publish if everything was setup correctly. Note cloud builds don't start triggering till you've made commits to a branch.
-
-### Concerning Commitlint
-
-If you find cloud builds failing because of pre-existing commit history that doesn't match commitlint. You'll need to temporarily disable the line `commitlint-travis` in `travis.yml`. You can safely turn this back on once you've merged your code to `master`.
+Add the key to your repo [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) as `NPM_TOKEN`.
 
 ## Development Environment
 

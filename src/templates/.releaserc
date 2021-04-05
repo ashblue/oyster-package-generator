@@ -4,29 +4,24 @@
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
+    ],
+    [
       "@semantic-release/exec",
       {
-        "verifyConditionsCmd": "npm run build",
-        "prepareCmd": "npm run build"
+        "publishCmd": "npm run build"
       }
     ],
     [
       "@semantic-release/npm",
       {
-        "pkgRoot": "dist"
+        "pkgRoot": "Assets/{name}"
       }
     ],
     "@semantic-release/git",
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          {
-            "path": "dist.zip",
-            "label": "Package Build"
-          }
-        ]
-      }
-    ]
+    "@semantic-release/github"
   ]
 }

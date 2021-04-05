@@ -6,13 +6,13 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*',
   ],
-  coverageDirectory: "dist/coverage",
+  coverageDirectory: "coverage",
   coverageThreshold: {
     global: {
       branches: 78,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+      functions: 86,
+      lines: 82,
+      statements: 82,
     }
   },
   moduleFileExtensions: [
