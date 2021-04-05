@@ -40,6 +40,7 @@ If you don't care about all the granular details just do the following.
 1. Install Semantic Release for cloud deploys
     1. Run `npm install -g semantic-release-cli`
     1. Then run `semantic-release-cli setup` and answer the prompts to setup GitHub Actions. This will setup cloud deployments for you
+1. Set your default GitHub branch to `develop` instead of `master`. While not required, this will make pull requests and maintaining your repo easier
 
 Once setup all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
 
