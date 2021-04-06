@@ -2,7 +2,7 @@
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-Setting up a Unity Package Manger project with cloud builds, automated version numbers, and documentation can take several hours. Oyster Package Generator creates all of this for you by answering a few simple questions about your project.
+Setting up a Unity package manger project with cloud builds, automated version numbers, and documentation can take days. Oyster Package Generator creates all of this for you by answering a few simple questions about your project. Save hundred of hours deploying and maintaining your Unity package by spending 15 minutes to setup and run Oyster.
 
 ![Oyster Package Generator CLI](src/images/cli-example.png)
 
@@ -14,6 +14,7 @@ Features
 * Auto-deploying nightly builds as you make commits
 * Change logs are generated from commits
 * Allows you to work inside a Unity project without cloning nested repos in `Assets`
+* Usable across platforms thanks to Node.js (Mac, Windows, Linux, ect.)
 
 **Support**
 
@@ -24,9 +25,9 @@ Join the [Discord Community](https://discord.gg/8QHFfzn) if you have questions o
 In order to use Oyster Package Generator you'll need the following.
 
 * [Git](https://git-scm.com/) installed
-* [Node.js](https://nodejs.org/en/) version 14 installed
-* [GitHub](https://github.com/) account (uses GitHub specific publishing features)
-* Window Note: Due to various Linux install scripts this does not work on Windows machines
+* [Node.js](https://nodejs.org/en/) version [here](.nvmrc) installed
+* [GitHub](https://github.com/) account (uses GitHub specific deployment features)
+* [NPM](https://www.npmjs.com/) account (used to publish packages)
 
 ## Quick Start
 
@@ -112,12 +113,14 @@ Add the key to your repo [secrets](https://docs.github.com/en/actions/reference/
 
 ## Development Environment
 
-To run this project locally you'll need to clone this repo and run the following in your project root. [NVM](https://github.com/nvm-sh/nvm) is highly recommended to sync your local Node.js version.
+To run this project locally you'll need to clone this repo and run the following in your project root. [NVM](https://github.com/nvm-sh/nvm) is recommended to sync your local Node.js version. Or you can install the [.nvmrc](.nvmrc) file version directly from the [Node.js](https://nodejs.org/) site. Please note the version of Node.js you use is important.
 
 ```bash
+# If using NVM
 nvm use
+
 npm install
-npm build
+npm run build
 ```
 
 After the processes are complete, you'll need to setup the oyster command locally to test it. This is important since you probably want to execute the command in various Unity projects. We can easily do this by running the following.

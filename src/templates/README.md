@@ -43,7 +43,7 @@ Note that to get a newer nightly build you must delete this line and any related
 
 ## Development Environment
 
-If you wish to run the development environment you'll need to install the [node.js](https://nodejs.org/en/) version in the `.nvmrc` file. The easiest way to do this is install [NVM](https://github.com/nvm-sh/nvm) and run `nvm use`. 
+If you wish to run the development environment you'll need to install the [Node.js](https://nodejs.org/en/) version in the [.nvmrc](.nvmrc) file. The easiest way to do this is install [NVM](https://github.com/nvm-sh/nvm) and run `nvm use`. 
 
 Once you've installed Node.js, run the following from the root once.
 
