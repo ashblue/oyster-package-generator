@@ -2,7 +2,7 @@
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-Setting up a Unity package manger project with cloud builds, automated version numbers, and documentation can take days. Oyster Package Generator creates all of this for you by answering a few simple questions about your project. Save hundred of hours deploying and maintaining your Unity package by spending 15 minutes to setup and run Oyster.
+Setting up a Unity package manager project with cloud builds, automated version numbers, and documentation can take days. Oyster Package Generator creates all of this for you by answering a few simple questions about your project. Save hundred of hours deploying and maintaining your Unity package by spending 15 minutes to setup and run Oyster.
 
 ![Oyster Package Generator CLI](src/images/cli-example.png)
 
