@@ -31,19 +31,29 @@ In order to use Oyster Package Generator you'll need the following.
 
 ## Quick Start
 
-If you don't care about all the granular details just do the following.
+If you just want a project generated run the following in a Unity repo.
+
+```bash
+npx oyster-package-generator
+```
+
+If you want a step-by-step guide follow along below.
 
 1. Create a new Unity project and navigate to the root
-1. Setup Git (skip if already setup)
+2. Setup Git (skip if already setup)
     1. Run `git init` to prep everything for Git
-    1. Run `git remote add origin YOUR_REPO`. Replace `YOUR_REPO` with the proper repo URL (such as git@github.com:ashblue/oyster-package-generator.git). This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
-1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
-1. Install Semantic Release for cloud deploys
+    2. Run `git remote add origin YOUR_REPO`. Replace `YOUR_REPO` with the proper repo URL (such as git@github.com:ashblue/oyster-package-generator.git). This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
+3. Generate the Oyster package
+    1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
+    2. Create your first commit with `npm run commit`. Choose "chore" and write "My first commit" for the body text
+    3. Run `npm push` to deploy the `master` branch (follow on-screen instructions if prompted)
+    4. Use `get checkout -b develop` and then run `git push` to deploy it
+4. Install Semantic Release for cloud deploys
     1. Run `npm install -g semantic-release-cli`
-    1. Then run `semantic-release-cli setup` and answer the prompts to setup GitHub Actions. This will setup cloud deployments for you
-1. Set your default GitHub branch to `develop` instead of `master`. While not required, this will make pull requests and maintaining your repo easier
+    2. Then run `semantic-release-cli setup` and answer the prompts to setup GitHub Actions. This will setup cloud deployments for you. Or you can [manually](#the-hard-way) generate an NPM token.
+5. Set your default GitHub branch to `develop` instead of `master` in your repo's settings. While not required, this will make pull requests and maintaining your repo easier
 
-Once setup all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
+Once setup, all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
 
 ## Running the CLI
 
@@ -82,6 +92,10 @@ Why do I need GitFlow you might ask? Commits to Oyster's `develop` branch automa
 
 In short **you must** have a `develop` and `master` branch for cloud builds to work properly.
 
+#### GitHub Protected Branches
+
+Due to a known bug with GitHub Action commits, it's not recommended to add special requirements to a `master` protected branch. You can still protect `master`, but special requirements will result in crashing the Semantic Release bot that auto deploys releases.
+
 ### Licensing
 
 Oyster Package Generator automatically includes an MIT license in the project. You can easily change this by deleting/changing the `package.json` license key and the `LICENSE.md` file if you desire.
@@ -107,7 +121,7 @@ semantic-release-cli setup
 
 ### The hard way
 
-To get builds automatically deploying you'll need an NPM token. To get one we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens). You must have an [npm](https://www.npmjs.com) account to generate a token. 
+To get builds automatically deploying you'll need an NPM token. To get one we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) and choose the CI token type. You must have an [npm](https://www.npmjs.com) account to generate a token. 
 
 Add the key to your repo [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) as `NPM_TOKEN`.
 

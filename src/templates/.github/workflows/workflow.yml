@@ -5,7 +5,7 @@ jobs:
         runs-on: ubuntu-16.04
         steps:
             - uses: actions/checkout@v2
-            - uses: actions/setup-node@v2e
+            - uses: actions/setup-node@v2
               with:
                   node-version: '14'
             - run: npm install
@@ -13,4 +13,5 @@ jobs:
             - name: Release
               env:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: npm run semantic-release
