@@ -21,7 +21,18 @@
         "pkgRoot": "Assets/{name}"
       }
     ],
-    "@semantic-release/git",
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "CHANGELOG.md",
+          "package.json",
+          "package-lock.json",
+          "npm-shrinkwrap.json",
+          "Assets/**/*"
+        ]
+      }
+    ],
     "@semantic-release/github"
   ]
 }

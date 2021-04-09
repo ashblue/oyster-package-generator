@@ -7,7 +7,7 @@ setup_git() {
 
 update_nightly_branch() {
     printf "Run nightly update \n"
-    git remote add origin-nightly https://${secrets.GITHUB_TOKEN}@{gitUrlNoHttp}.git
+    git remote add origin-nightly "https://${GH_TOKEN}@{gitUrlNoHttp}.git"
     git subtree split --prefix Assets/{name} -b nightly
     git push -f origin-nightly nightly:nightly
 }
