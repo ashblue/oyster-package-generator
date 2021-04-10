@@ -43,7 +43,9 @@ Note that to get a newer nightly build you must delete this line and any related
 
 ## Development Environment
 
-If you wish to run to run the development environment you'll need to install the latest [node.js](https://nodejs.org/en/). Then run the following from the root once.
+If you wish to run the development environment you'll need to install the [Node.js](https://nodejs.org/en/) version in the [.nvmrc](.nvmrc) file. The easiest way to do this is install [NVM](https://github.com/nvm-sh/nvm) and run `nvm use`. 
+
+Once you've installed Node.js, run the following from the root once.
 
 `npm install`
 
@@ -53,11 +55,15 @@ If you wish to create a build run `npm run build` from the root and it will popu
 
 All commits should be made using [Commitizen](https://github.com/commitizen/cz-cli) (which is automatically installed when running `npm install`). Commits are automatically compiled to version numbers on release so this is very important. PRs that don't have Commitizen based commits will be rejected.
 
-To make a commit type the following into a terminal from the root
+To make a commit type the following into a terminal from the root.
 
 ```bash
 npm run commit
 ```
+
+### How To Contribute
+
+Please see the [CONTRIBUTIONS.md](./CONTRIBUTING.md) file for full details on how to contribute to this project.
 
 ---
 

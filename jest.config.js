@@ -1,15 +1,23 @@
 module.exports = {
   clearMocks: true,
-  coverageDirectory: "dist/coverage",
-  globals: {
-    'ts-jest': {
-      tsConfig: 'tsconfig.json',
+  modulePathIgnorePatterns: [
+    'src/templates',
+  ],
+  collectCoverageFrom: [
+    'src/**/*',
+  ],
+  coverageDirectory: "coverage",
+  coverageThreshold: {
+    global: {
+      branches: 78,
+      functions: 86,
+      lines: 82,
+      statements: 82,
     }
   },
   moduleFileExtensions: [
     "js",
     "ts",
-    "tsx"
   ],
   testEnvironment: "node",
   testMatch: [
