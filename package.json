@@ -1,6 +1,6 @@
 {
   "name": "oyster-package-generator",
-  "version": "0.0.0-development",
+  "version": "2.0.0",
   "description": "CLI to automatically generate a Unity Package Manager project",
   "main": "dist/index.js",
   "scripts": {
