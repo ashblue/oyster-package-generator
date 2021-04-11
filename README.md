@@ -44,13 +44,11 @@ If you want a step-by-step guide follow along below.
     1. Run `git init` to prep everything for Git
     2. Run `git remote add origin YOUR_REPO`. Replace `YOUR_REPO` with the proper repo URL (such as git@github.com:ashblue/oyster-package-generator.git). This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
 3. Generate the Oyster package
-    1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish
+    1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish. If you notice a bug on Windows 10 [see here](#windows-10-troubleshooting)
     2. Create your first commit with `npm run commit`. Choose "chore" and write "My first commit" for the body text
-    3. Run `npm push` to deploy the `master` branch (follow on-screen instructions if prompted)
-    4. Use `get checkout -b develop` and then run `git push` to deploy it
-4. Install Semantic Release for cloud deploys
-    1. Run `npm install -g semantic-release-cli`
-    2. Then run `semantic-release-cli setup` and answer the prompts to setup GitHub Actions. This will setup cloud deployments for you. Or you can [manually](#the-hard-way) generate an NPM token.
+    3. Run `git push` to deploy the `master` branch (follow on-screen instructions if prompted)
+    4. Use `git checkout -b develop` and then run `git push` to deploy it
+4. [Setup cloud deploys](#setting-up-cloud-builds) (optional)
 5. Set your default GitHub branch to `develop` instead of `master` in your repo's settings. While not required, this will make pull requests and maintaining your repo easier
 
 Once setup, all commits to the `master` branch will generate a new release. All commits to the `develop` branch will generate an unversioned nightly build.
@@ -74,7 +72,7 @@ npm install -g oyster-package-generator
 oyster
 ```
 
-You're done. If you want to [setup cloud builds manually](#setting-up-cloud-builds) you'll need to do a few extra things.
+You're done. If you want to [setup cloud builds manually](#setting-up-cloud-builds) you'll need to do one extra thing.
 
 ### Making commits to your project
 
@@ -92,6 +90,19 @@ Why do I need GitFlow you might ask? Commits to Oyster's `develop` branch automa
 
 In short **you must** have a `develop` and `master` branch for cloud builds to work properly.
 
+### Windows 10 Troubleshooting
+
+If you're on Windows 10 you may run into the username space bug in the filepath (example `C:/first last/ect/...`). This is a [known issue](https://github.com/zkat/npx/issues/146) with `npx`. You might just want to install the package globally with the following instead of trying to fix it.
+
+```bash
+npm install -g oyster-package-generator
+
+# Run the program
+oyster
+```
+
+You may also want to consider installing Node.js in the root of your C drive to decrease any problems you might encounter. For example a new `C:/node` folder during Node's setup.
+
 #### GitHub Protected Branches
 
 Due to a known bug with GitHub Action commits, it's not recommended to add special requirements to a `master` protected branch. You can still protect `master`, but special requirements will result in crashing the Semantic Release bot that auto deploys releases.
@@ -108,20 +119,7 @@ https://trello.com/b/Z9P0XMl6/oyster-package-generator
 
 ## Setting up cloud builds
 
-Cloud and nightly builds are done with GitHub actions. If you're running a GitHub project you only need to add an NPM token.
-
-### The quick way
-
-Oyster package manager is compatible with [semantic-release-cli](https://github.com/semantic-release/cli). Run the following commands from the root of your project, fill in the questions, choose GitHub actions, and your keys will automatically be configured.
-
-```bash
-npm install -g semantic-release-cli
-semantic-release-cli setup
-```
-
-### The hard way
-
-To get builds automatically deploying you'll need an NPM token. To get one we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) and choose the CI token type. You must have an [npm](https://www.npmjs.com) account to generate a token. 
+To get builds automatically deploying you'll need an NPM token. To get one we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) and choose the "Automation" token type. You must have an [npm](https://www.npmjs.com) account to generate a token. 
 
 Add the key to your repo [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) as `NPM_TOKEN`.
 
