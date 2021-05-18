@@ -1,5 +1,5 @@
 import {Question} from 'inquirer';
-import { Terminal } from './terminal';
+import InstallQuestions from './install-questions';
 
 const findQuestionMatch = (
   questions: Question[],
@@ -10,15 +10,15 @@ const findQuestionMatch = (
 describe('Terminal', () => {
   describe('requiredString method', () => {
     it('should return true if string is not empty', () => {
-      expect(Terminal.requiredString('a')).toBeTruthy();
+      expect(InstallQuestions.requiredString('a')).toBeTruthy();
     });
 
     it('should return false if string is empty', () => {
-      expect(Terminal.requiredString('')).toBeFalsy();
+      expect(InstallQuestions.requiredString('')).toBeFalsy();
     });
 
     it('should return false if string is empty after trimming', () => {
-      expect(Terminal.requiredString(' ')).toBeFalsy();
+      expect(InstallQuestions.requiredString(' ')).toBeFalsy();
     });
   });
 
@@ -37,7 +37,7 @@ describe('Terminal', () => {
         _inquirerStub.prompt.mockImplementation(() =>
           Promise.resolve({keywords}));
 
-        const terminal = new Terminal(_inquirerStub);
+        const terminal = new InstallQuestions(_inquirerStub);
         return await terminal.askQuestions();
       };
 
@@ -65,7 +65,7 @@ describe('Terminal', () => {
 
     describe('ask name', () => {
       it('should ask for the name', async () => {
-        const terminal = new Terminal(_inquirerStub);
+        const terminal = new InstallQuestions(_inquirerStub);
         await terminal.askName();
 
         const match = findQuestionMatch(
@@ -81,7 +81,7 @@ describe('Terminal', () => {
 
     describe('question inputs', () => {
       beforeEach(async () => {
-        const terminal = new Terminal(_inquirerStub);
+        const terminal = new InstallQuestions(_inquirerStub);
         await terminal.askQuestions();
       });
 

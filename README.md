@@ -4,7 +4,7 @@
 
 Setting up a Unity package manager project with cloud builds, automated version numbers, and documentation can take days. Oyster Package Generator creates all of this for you by answering a few simple questions about your project. Save hundred of hours deploying and maintaining your Unity package by spending 15 minutes to setup and run Oyster.
 
-![Oyster Package Generator CLI](src/images/cli-example.png)
+![Oyster Package Generator CLI](docs/cli-example.png)
 
 Features
 
@@ -34,7 +34,7 @@ In order to use Oyster Package Generator you'll need the following.
 If you just want a project generated run the following in a Unity repo.
 
 ```bash
-npx oyster-package-generator
+npx oyster-package-generator init
 ```
 
 If you want a step-by-step guide follow along below.
@@ -60,7 +60,7 @@ To generate your project you'll need to setup a GitHub repo if you haven't in a 
 Run the following command and answer the question prompts.
 
 ```bash
-npx oyster-package-generator
+npx oyster-package-generator init
 ```
 
 Please note if you plan on using Oyster a lot you should globally install it for speed purposes. `npx` can be quite slow since it doesn't cache.
@@ -69,7 +69,7 @@ Please note if you plan on using Oyster a lot you should globally install it for
 npm install -g oyster-package-generator
 
 # Run the program
-oyster
+oyster init
 ```
 
 You're done. If you want to [setup cloud builds manually](#setting-up-cloud-builds) you'll need to do one extra thing.
@@ -98,7 +98,7 @@ If you're on Windows 10 you may run into the username space bug in the filepath 
 npm install -g oyster-package-generator
 
 # Run the program
-oyster
+oyster init
 ```
 
 You may also want to consider installing Node.js in the root of your C drive to decrease any problems you might encounter. For example a new `C:/node` folder during Node's setup.

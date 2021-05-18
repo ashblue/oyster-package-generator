@@ -5,19 +5,19 @@ import {
   ICopyFolderOptions,
   IKeyValuePair,
 } from '../copy-folder/copy-folder';
-import { GitDetector } from '../git-detector/git-detector';
-import { Terminal } from '../terminal/terminal';
+import GitDetector from '../git-detector/git-detector';
+import InstallQuestions from '../install-questions/install-questions';
 
-export class PackageBuilder {
+export default class PackageBuilder {
   private readonly _copyFolder: CopyFolderType;
-  private readonly _terminal: Terminal;
+  private readonly _terminal: InstallQuestions;
   private readonly _gitDetector: GitDetector;
   private readonly _findPreExistingFiles: FindPreExistingFilesType;
 
   constructor(
     copyFolder: CopyFolderType,
     findPreExistingFiles: FindPreExistingFilesType,
-    terminal: Terminal,
+    terminal: InstallQuestions,
     gitDetector: GitDetector) {
     this._copyFolder = copyFolder;
     this._findPreExistingFiles = findPreExistingFiles;

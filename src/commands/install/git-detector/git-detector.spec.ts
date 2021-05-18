@@ -1,4 +1,4 @@
-import {GitDetector} from './git-detector';
+import GitDetector from './git-detector';
 
 describe('GitDetector', () => {
   describe('isGitRepo', () => {
