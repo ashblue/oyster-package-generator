@@ -10,7 +10,7 @@ export interface IQuestionsToAnswers {
   name: string;
 }
 
-export class Terminal {
+export default class InstallQuestions {
   private _inquirer: Inquirer;
 
   constructor(inquirer: Inquirer) {
@@ -69,7 +69,7 @@ export class Terminal {
       message: `Package name? Internal ID that's permanent. Example ${packageNameFormat} or ${packageNameExample}`,
       name: 'name',
       type: 'input',
-      validate: (value) => Terminal.requiredString(value),
+      validate: (value) => InstallQuestions.requiredString(value),
     };
   }
 
@@ -81,7 +81,7 @@ export class Terminal {
       message: `Package display name? Should be user-friendly. Example ${example} or ${exampleAlt}`,
       name: 'displayName',
       type: 'input',
-      validate: (value) => Terminal.requiredString(value),
+      validate: (value) => InstallQuestions.requiredString(value),
     };
   }
 

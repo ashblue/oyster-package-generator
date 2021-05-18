@@ -63,7 +63,7 @@ npm run commit
 
 ### How To Contribute
 
-Please see the [CONTRIBUTIONS.md](./CONTRIBUTING.md) file for full details on how to contribute to this project.
+Please see the [CONTRIBUTIONS.md](CONTRIBUTING.md) file for full details on how to contribute to this project.
 
 ---
 

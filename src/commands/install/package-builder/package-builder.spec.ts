@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import {ICopyFolderResults, IKeyValuePair} from '../copy-folder/copy-folder';
 import {IGitDetails, IRepoStatus} from '../git-detector/git-detector';
-import {PackageBuilder} from './package-builder';
+import PackageBuilder from './package-builder';
 import Mock = jest.Mock;
 
 const findVariableMatch = (

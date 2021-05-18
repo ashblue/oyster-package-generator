@@ -9,7 +9,7 @@ export interface IRepoStatus {
   message: string;
 }
 
-export class GitDetector {
+export default class GitDetector {
   private readonly _gitRemoteOriginUrl: () => Promise<string>;
 
   constructor(gitRemoteOriginUrl: () => Promise<string>) {
