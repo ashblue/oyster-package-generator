@@ -1,0 +1,12 @@
+{
+    "name": "{packageName}.Editor",
+    "references": [
+        "{packageName}"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

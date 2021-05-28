@@ -1,9 +1,10 @@
 import path from 'path';
 import * as shell from 'shelljs';
+import * as copyFolder from '../shared/copy-folder/copy-folder';
+import ConfigManager from '../shared/config/manager/config-manager';
 import CommandInstall from './command-install';
 import InstallQuestions from './install-questions/install-questions';
 import GitDetector from './git-detector/git-detector';
-import * as CopyFolder from './copy-folder/copy-folder';
 import PackageBuilder from './package-builder/package-builder';
 
 jest.spyOn(console, 'log').mockImplementation();
@@ -20,16 +21,15 @@ jest.mock('./git-detector/git-detector');
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mockGitDetector: jest.Mock<any> = GitDetector as any;
 
-jest.mock('./copy-folder/copy-folder');
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const mockCopyFolder: {
-  copyFolder: jest.Mock<any>;
-  findPreExistingFiles: jest.Mock<any>;
-} = CopyFolder as any;
+jest.mock('../shared/copy-folder/copy-folder');
 
 jest.mock('./package-builder/package-builder');
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mockPackageBuilder: jest.Mock<any> = PackageBuilder as any;
+
+jest.mock('../shared/config/manager/config-manager');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const mockConfigManager: jest.Mock<any> = ConfigManager as any;
 
 describe('CommandInstall class', () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -45,7 +45,9 @@ describe('CommandInstall class', () => {
     mockGitDetector.mockImplementation(() => responseGitDetector);
 
     const instancePackageBuilder = { build: jest.fn() };
-    instancePackageBuilder.build.mockImplementation(() => Promise.resolve(!options.failPackageBuild));
+    instancePackageBuilder.build.mockImplementation(() =>
+      Promise.resolve(!options.failPackageBuild),
+    );
     mockPackageBuilder.mockImplementation(() => instancePackageBuilder);
 
     return {
@@ -58,16 +60,18 @@ describe('CommandInstall class', () => {
 
   describe('run method', () => {
     it('should create a package builder with the expected arguments', async () => {
-      const {
-        commandInstall,
-        responseInstallQuestions,
-        responseGitDetector,
-      } = setup();
+      const { commandInstall, responseInstallQuestions, responseGitDetector } =
+        setup();
 
       await commandInstall.run();
 
       expect(mockPackageBuilder).toHaveBeenCalledWith(
-        mockCopyFolder.copyFolder, mockCopyFolder.findPreExistingFiles, responseInstallQuestions, responseGitDetector);
+        copyFolder.copyFileFolder,
+        copyFolder.findPreExistingFiles,
+        responseInstallQuestions,
+        responseGitDetector,
+        mockConfigManager.mock.instances[0],
+      );
     });
 
     it('should trigger build on the package builder', async () => {
@@ -76,12 +80,12 @@ describe('CommandInstall class', () => {
       await commandInstall.run();
 
       expect(instancePackageBuilder.build).toHaveBeenCalledWith(
-        path.resolve(__dirname, './templates'),
+        path.resolve(__dirname, './../../../src/templates'),
         './',
       );
     });
 
-    it('should run shell.exec(\'npm install\')', async () => {
+    it("should run shell.exec('npm install')", async () => {
       const { commandInstall } = setup();
 
       await commandInstall.run();

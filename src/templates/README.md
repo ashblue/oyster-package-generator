@@ -18,7 +18,7 @@
     }
   ],
   "dependencies": {
-    "{name}": "1.0.0"
+    "{packageName}": "1.0.0"
   }
 }
 ```
@@ -34,7 +34,7 @@ To access nightly builds of the `develop` branch that are package manager friend
 ```json
 {
     "dependencies": {
-      "{name}": "{gitUrl}.git#nightly"
+      "{packageName}": "{gitUrl}.git#nightly"
     }
 }
 ```

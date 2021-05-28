@@ -1,17 +1,15 @@
 import * as fs from 'fs';
-import * as nodePath from 'path';
+import { resolve } from 'path';
 import * as glob from 'glob';
 import * as del from 'del';
 import fse from 'fs-extra';
 
-const TMP_PATH = nodePath.resolve(__dirname, '../../tmp/build');
-
 export interface IKeyValuePair {
-  variable: string;
+  key: string;
   value: string;
 }
 
-export interface ICopyFolderOptions {
+export interface ICopyFileFolderOptions {
   replaceVariables: IKeyValuePair[];
 }
 
@@ -22,18 +20,20 @@ export interface ICopyFolderResults {
 export type CopyFolderType = (
   source: string,
   destination: string,
-  options?: ICopyFolderOptions) => Promise<void>;
+  options?: ICopyFileFolderOptions,
+) => Promise<void>;
 
 export type FindPreExistingFilesType = (
   source: string,
   destination: string,
-  variables: IKeyValuePair[]) => string[];
+  variables: IKeyValuePair[],
+) => string[];
 
-const renameFileWithVariables = (path: string, variables: IKeyValuePair[] | undefined): string => {
+const renameFileWithVariables = (
+  path: string,
+  variables: IKeyValuePair[],
+): string => {
   if (!path.includes('{') || !path.includes('}')) {
-    return path;
-  }
-  if (!variables) {
     return path;
   }
 
@@ -50,17 +50,14 @@ const renameFileWithVariables = (path: string, variables: IKeyValuePair[] | unde
 const replaceVariables = (text: string, variables: IKeyValuePair[]): string => {
   let newText = text;
   variables.forEach((r) => {
-    const matches = new RegExp(`{${r.variable}}`, 'g');
+    const matches = new RegExp(`{${r.key}}`, 'g');
     newText = newText.replace(matches, r.value);
   });
 
   return newText;
 };
 
-const replaceFileContents = (path: string, variables: IKeyValuePair[] | undefined) => {
-  if (!variables) {
-    return;
-  }
+const replaceFileContents = (path: string, variables: IKeyValuePair[]) => {
   const details = fs.statSync(path);
   if (details.isDirectory()) {
     return;
@@ -75,18 +72,21 @@ const replaceFileContents = (path: string, variables: IKeyValuePair[] | undefine
 export const findPreExistingFiles = (
   source: string,
   destination: string,
-  variables: IKeyValuePair[]
+  variables: IKeyValuePair[],
 ): string[] => {
   const matches: string[] = [];
-  const sourceFiles = glob.sync(`${source}/**/*`, {nodir: true, dot: true})
+  const sourceFiles = glob
+    .sync(`${source}/**/*`, { nodir: true, dot: true })
     .filter((f) => !f.includes('.DS_Store'))
     .map((f) => {
       const partial = f.replace(source, '');
       return replaceVariables(partial, variables);
     });
 
-  const destFiles = glob.sync(`${destination}/**/*`, {nodir: true, dot: true});
-
+  const destFiles = glob.sync(`${destination}/**/*`, {
+    nodir: true,
+    dot: true,
+  });
   destFiles.forEach((f) => {
     let path = f.replace(destination, '');
     if (path.charAt(0) !== '/') {
@@ -101,17 +101,36 @@ export const findPreExistingFiles = (
   return matches;
 };
 
-const copyFilesWithVariables = async (source: string, destination: string, options: ICopyFolderOptions) => {
-  await del.default(TMP_PATH, {force: true});
+const getDestinationPaths = (isFile: boolean, destination: string) => {
+  if (isFile) {
+    return [destination];
+  }
 
-  fs.mkdirSync(destination, {recursive: true});
+  return glob.sync(`${destination}/**/*`, { dot: true });
+};
+
+const copyFolderWithVariables = async (
+  source: string,
+  destination: string,
+  options: ICopyFileFolderOptions,
+) => {
+  await del.default(destination, { force: true, dot: true });
+
+  const sourceType = fs.statSync(source);
+  if (!sourceType.isFile()) {
+    fs.mkdirSync(destination, { recursive: true });
+  }
+
   fse.copySync(source, destination);
 
-  const destinationPaths = glob.sync(`${destination}/**/*`, {dot: true});
   const replaceMatches: Array<{ key: string; value: string }> = [];
+  const destinationPaths = getDestinationPaths(
+    sourceType.isFile(),
+    destination,
+  );
   destinationPaths.forEach((path) => {
-
     replaceMatches.forEach((match) => {
+      /* istanbul ignore next */
       if (path.includes(match.key)) {
         path = path.replace(match.key, match.value);
       }
@@ -119,20 +138,21 @@ const copyFilesWithVariables = async (source: string, destination: string, optio
 
     const newPath = renameFileWithVariables(path, options.replaceVariables);
     if (newPath !== path) {
-      replaceMatches.push({key: path, value: newPath});
+      replaceMatches.push({ key: path, value: newPath });
     }
 
     replaceFileContents(newPath, options.replaceVariables);
   });
 };
 
-export const copyFolder = async (
+export const copyFileFolder = async (
   source: string,
   destination: string,
-  options: ICopyFolderOptions = {replaceVariables: []}
+  options: ICopyFileFolderOptions = { replaceVariables: [] },
 ): Promise<void> => {
+  const tmpPath = resolve(__dirname, '../../../../tmp/build');
 
-  await copyFilesWithVariables(source, TMP_PATH, options);
+  await copyFolderWithVariables(source, tmpPath, options);
 
-  fse.copySync(TMP_PATH, destination);
+  fse.copySync(tmpPath, destination);
 };

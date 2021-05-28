@@ -1,7 +1,7 @@
 module.exports = {
   clearMocks: true,
   modulePathIgnorePatterns: [
-    'src/commands/install/templates',
+    'src/templates',
   ],
   collectCoverageFrom: [
     'src/**/*',
@@ -9,10 +9,10 @@ module.exports = {
   coverageDirectory: "coverage",
   coverageThreshold: {
     global: {
-      branches: 84,
-      functions: 95,
-      lines: 96,
-      statements: 96,
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100,
     }
   },
   moduleFileExtensions: [

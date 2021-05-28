@@ -2,12 +2,16 @@ import path from 'path';
 import chalk from 'chalk';
 import * as inquirer from 'inquirer';
 import { exec } from 'shelljs';
-import { copyFolder, findPreExistingFiles } from './copy-folder/copy-folder';
+import ConfigManager from '../shared/config/manager/config-manager';
+import {
+  copyFileFolder,
+  findPreExistingFiles,
+} from '../shared/copy-folder/copy-folder';
 import GitDetector from './git-detector/git-detector';
 import InstallQuestions from './install-questions/install-questions';
 import PackageBuilder from './package-builder/package-builder';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-var-requires
 const gitRemoteOriginUrl = require('git-remote-origin-url');
 
 export default class CommandInstall {
@@ -17,7 +21,11 @@ export default class CommandInstall {
       return;
     }
 
-    console.log(chalk.yellow('Installing dependencies, please wait. May take several minutes...'));
+    console.log(
+      chalk.yellow(
+        'Installing dependencies, please wait. May take several minutes...',
+      ),
+    );
 
     exec('npm install');
 
@@ -27,11 +35,17 @@ export default class CommandInstall {
   private runPackageBuilder() {
     const terminal = new InstallQuestions(inquirer);
     const gitDetector = new GitDetector(gitRemoteOriginUrl);
+    const configManager = new ConfigManager();
     const packageBuilder = new PackageBuilder(
-      copyFolder, findPreExistingFiles, terminal, gitDetector);
+      copyFileFolder,
+      findPreExistingFiles,
+      terminal,
+      gitDetector,
+      configManager,
+    );
 
     return packageBuilder.build(
-      path.resolve(__dirname, './templates'),
+      path.resolve(__dirname, './../../../src/templates'),
       './',
     );
   }

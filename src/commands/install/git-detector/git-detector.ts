@@ -22,7 +22,7 @@ export default class GitDetector {
 
     try {
       await this._gitRemoteOriginUrl();
-    } catch (e: any) {
+    } catch (e) {
       isGitRepo = false;
       if (typeof e === 'string') {
         message = e;
@@ -38,16 +38,10 @@ export default class GitDetector {
   public async getDetails(): Promise<IGitDetails> {
     const remote = await this._gitRemoteOriginUrl();
 
-    let gitUrl = remote.replace(
-      'git@github.com:',
-      'https://github.com/',
-    );
+    let gitUrl = remote.replace('git@github.com:', 'https://github.com/');
     gitUrl = gitUrl.replace('.git', '');
 
-    let gitUrlNoHttp = remote.replace(
-      'git@github.com:',
-      'github.com/',
-    );
+    let gitUrlNoHttp = remote.replace('git@github.com:', 'github.com/');
     gitUrlNoHttp = gitUrlNoHttp.replace('.git', '');
 
     return {

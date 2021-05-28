@@ -1,2 +1,2 @@
-src/commands/install/templates
-src/commands/install/templates/package.json
+src/templates
+src/templates/package.json

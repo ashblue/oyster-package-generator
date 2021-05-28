@@ -1,10 +1,11 @@
 import chalk from 'chalk';
+import Config from '../../shared/config/config';
+import ConfigManager from '../../shared/config/manager/config-manager';
 import {
   CopyFolderType,
   FindPreExistingFilesType,
-  ICopyFolderOptions,
-  IKeyValuePair,
-} from '../copy-folder/copy-folder';
+} from '../../shared/copy-folder/copy-folder';
+import { getReplacementKeyValuePairs } from '../../shared/replacement-variables/replacement-variables';
 import GitDetector from '../git-detector/git-detector';
 import InstallQuestions from '../install-questions/install-questions';
 
@@ -13,16 +14,20 @@ export default class PackageBuilder {
   private readonly _terminal: InstallQuestions;
   private readonly _gitDetector: GitDetector;
   private readonly _findPreExistingFiles: FindPreExistingFilesType;
+  private readonly _config: ConfigManager;
 
   constructor(
     copyFolder: CopyFolderType,
     findPreExistingFiles: FindPreExistingFilesType,
     terminal: InstallQuestions,
-    gitDetector: GitDetector) {
+    gitDetector: GitDetector,
+    config: ConfigManager,
+  ) {
     this._copyFolder = copyFolder;
     this._findPreExistingFiles = findPreExistingFiles;
     this._terminal = terminal;
     this._gitDetector = gitDetector;
+    this._config = config;
   }
 
   public async build(source: string, destination: string): Promise<boolean> {
@@ -31,69 +36,74 @@ export default class PackageBuilder {
       return false;
     }
 
-    const name = await this._terminal.askName();
-    const fileDuplicates = this._findPreExistingFiles(
-      source,
-      destination,
-      [{variable: 'name', value: name}]);
+    const packageName = await this._terminal.askName();
+    const fileDuplicates = this._findPreExistingFiles(source, destination, [
+      { key: 'packageName', value: packageName },
+    ]);
 
     if (fileDuplicates.length > 0) {
       this.printDuplicatesMessage(fileDuplicates);
       return false;
     }
 
-    const answers = await this._terminal.askQuestions();
-    answers.name = name;
+    const config = await this.createConfig(packageName);
+    const replaceVariables = getReplacementKeyValuePairs(config);
 
-    const replaceVariables: IKeyValuePair[] = [
-      {
-        value: name.split('.', 2).join('.'),
-        variable: 'packageScope',
-      },
-      {
-        value: new Date().getFullYear().toString(),
-        variable: 'year',
-      },
-      // Because NPM doesn't include .gitignore files
-      {
-        value: '.gitignore',
-        variable: 'gitignore',
-      },
-    ];
-
-    const gitDetails = await this._gitDetector.getDetails();
-    Object.keys(gitDetails).forEach((key) => {
-      replaceVariables.push({
-        value: gitDetails[key],
-        variable: key,
-      });
-    });
-
-    for (const key in answers) {
-      if (!key) {
-        continue;
-      }
-
-      const value: string = answers[key];
-      replaceVariables.push({
-        value,
-        variable: key,
-      });
-    }
-
-    const options: ICopyFolderOptions = {replaceVariables};
-    await this._copyFolder(source, destination, options);
-
+    await this._copyFolder(source, destination, { replaceVariables });
+    this._config.generate(config);
     this.printResultsMessage();
 
     return true;
+  }
+
+  private async createConfig(packageName: string) {
+    const answers = await this._terminal.askQuestions();
+    const packageScope = packageName.split('.', 2).join('.');
+    const gitDetails = await this._gitDetector.getDetails();
+    const {
+      displayName,
+      description,
+      unityVersion,
+      keywords,
+      authorName,
+      authorUrl,
+      authorEmail,
+    } = answers;
+
+    const config = new Config({
+      packageName,
+      displayName,
+      description,
+      oysterVersion: 'empty',
+      unityVersion,
+      packageScope,
+      keywords,
+
+      author: {
+        name: authorName,
+        url: authorUrl,
+        email: authorEmail,
+      },
+
+      repo: {
+        ...gitDetails,
+      },
+    });
+
+    config.syncVersion();
+
+    return config;
   }
 
   private async verifyGitRepo(): Promise<boolean> {
     const gitRepo = await this._gitDetector.checkIfGitRepo();
     if (!gitRepo.isGitRepo) {
       console.log(chalk.redBright('Aborting package generation'));
-      console.log(chalk.yellow('Please ensure this is a Git repo with the origin remote properly set'));
+      console.log(
+        chalk.yellow(
+          'Please ensure this is a Git repo with the origin remote properly set',
+        ),
+      );
     }
 
     return gitRepo.isGitRepo;
@@ -106,7 +116,7 @@ export default class PackageBuilder {
     console.log(
       chalk.gray(
         'Please delete listed files and rerun the command. ' +
-        'Make sure to backup files before deleting.',
+          'Make sure to backup files before deleting.',
       ),
     );
 

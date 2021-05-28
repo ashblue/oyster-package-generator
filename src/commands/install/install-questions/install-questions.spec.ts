@@ -1,13 +1,14 @@
-import {Question} from 'inquirer';
+import { Question } from 'inquirer';
 import InstallQuestions from './install-questions';
 
 const findQuestionMatch = (
   questions: Question[],
   name: string,
   type: string,
-): Question | undefined => questions.find((v) => v.name === name && v.type === type);
+): Question | undefined =>
+  questions.find((v) => v.name === name && v.type === type);
 
-describe('Terminal', () => {
+describe('InstallQuestions class', () => {
   describe('requiredString method', () => {
     it('should return true if string is not empty', () => {
       expect(InstallQuestions.requiredString('a')).toBeTruthy();
@@ -35,7 +36,8 @@ describe('Terminal', () => {
       const getAnswers = async (keywords: string) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
         _inquirerStub.prompt.mockImplementation(() =>
-          Promise.resolve({keywords}));
+          Promise.resolve({ keywords }),
+        );
 
         const terminal = new InstallQuestions(_inquirerStub);
         return await terminal.askQuestions();
@@ -44,22 +46,19 @@ describe('Terminal', () => {
       it('should return an empty array for no keywords', async () => {
         const answers = await getAnswers('');
 
-        expect(answers.keywords)
-          .toBe(JSON.stringify([], null, 2));
+        expect(answers.keywords).toEqual([]);
       });
 
       it('should return a keyword', async () => {
         const answers = await getAnswers('a');
 
-        expect(answers.keywords)
-          .toBe(JSON.stringify(['a'], null, 2));
+        expect(answers.keywords).toEqual(['a']);
       });
 
       it('should return two keyword', async () => {
         const answers = await getAnswers('a, b');
 
-        expect(answers.keywords)
-          .toBe(JSON.stringify(['a', 'b'], null, 2));
+        expect(answers.keywords).toEqual(['a', 'b']);
       });
     });
 
@@ -111,7 +110,7 @@ describe('Terminal', () => {
         const match = findQuestionMatch(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           _inquirerStub.prompt.mock.calls[0][0],
-          'version',
+          'unityVersion',
           'input',
         );
 
