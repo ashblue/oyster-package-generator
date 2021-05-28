@@ -190,6 +190,8 @@ describe('CommandUpgrade class', () => {
           let src = `${sourcePath}/${file}`;
           if (file === '.gitignore') {
             src = `${sourcePath}/{gitignore}`;
+          } else if (file === 'package.json') {
+            src = `${sourcePath}/{packageJson}`;
           }
 
           expect(copyFileUtil.copyFileFolder).toHaveBeenCalledWith(src, dest, {

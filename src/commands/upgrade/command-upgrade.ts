@@ -92,6 +92,8 @@ export default class CommandUpgrade {
 
       if (file === '.gitignore') {
         src = `${sourcePath}/{gitignore}`;
+      } else if (file === 'package.json') {
+        src = `${sourcePath}/{packageJson}`;
       } else if (file === 'package-lock.json') {
         del.sync(dest);
         continue;

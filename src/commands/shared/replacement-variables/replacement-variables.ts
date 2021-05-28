@@ -7,6 +7,7 @@ export const getReplacementKeyValuePairs = (
   { key: 'packageScope', value: config.packageScope },
   { key: 'year', value: new Date().getFullYear().toString() },
   { key: 'gitignore', value: '.gitignore' },
+  { key: 'packageJson', value: 'package.json' },
   { key: 'packageName', value: config.packageName },
   { key: 'gitUrl', value: config.repo.gitUrl },
   { key: 'gitUrlNoHttp', value: config.repo.gitUrlNoHttp },
