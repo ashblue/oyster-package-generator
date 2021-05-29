@@ -103,6 +103,20 @@ oyster init
 
 You may also want to consider installing Node.js in the root of your C drive to decrease any problems you might encounter. For example a new `C:/node` folder during Node's setup.
 
+### Upgrading Older Projects
+
+This package comes with a convenient feature to upgrade an older Oyster project to the latest version. Please consider the following before running the command.
+
+* Make sure all changes are checked in, this will delete files
+* After the process runs, check your Git diffs to make sure nothing was lost
+* If you're upgrading from Travis CI to GitHub Actions you'll need to provide a new `NPM_TOKEN` in your repo's [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets)
+
+When ready, use this command to trigger the upgrade.
+
+```bash
+npx oyster-package-generator upgrade
+```
+
 #### GitHub Protected Branches
 
 Due to a known bug with GitHub Action commits, it's not recommended to add special requirements to a `master` protected branch. You can still protect `master`, but special requirements will result in crashing the Semantic Release bot that auto deploys releases.
@@ -147,6 +161,14 @@ If you ever want to remove the global `oyster` command just run the following in
 
 ```bash
 npm unlink
+```
+
+### Auto Builds
+
+While developing, you may want to automatically rebuild the app when changes are detected. To do so simply run the following command that will automatically listen for changes.
+
+```bash
+npm run dev
 ```
 
 ### Pull Requests / Contributing

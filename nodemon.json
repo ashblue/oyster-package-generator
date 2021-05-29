@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ignore": [
+    "*.spec.ts"
+  ],
+  "exec": "npm run build",
+  "ext": "js,ts"
+}

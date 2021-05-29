@@ -1,0 +1,7 @@
+{
+  "name": "{packageName}",
+  "version": "0.0.0",
+  "displayName": "{displayName}",
+  "description": "{description}",
+  "unity": "{unityVersion}"
+}
