@@ -1,4 +1,5 @@
 import CommandController from './commands-controller';
+import CommandGenerateConfig from './generate-config/command-generate-config';
 import CommandInstall from './install/command-install';
 import CommandUpgrade from './upgrade/command-upgrade';
 
@@ -13,6 +14,10 @@ jest.mock('./upgrade/command-upgrade');
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mockCommandUpgrade: jest.Mock<any> = CommandUpgrade as any;
 
+jest.mock('./generate-config/command-generate-config');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const mockCommandGenerateConfig: jest.Mock<any> = CommandGenerateConfig as any;
+
 describe('CommandController class', () => {
   const setup = () => {
     const instanceCommandInstall = { run: jest.fn() };
@@ -21,12 +26,18 @@ describe('CommandController class', () => {
     const instanceCommandUpgrade = { run: jest.fn() };
     mockCommandUpgrade.mockImplementation(() => instanceCommandUpgrade);
 
+    const instanceCommandGenerateConfig = { run: jest.fn() };
+    mockCommandGenerateConfig.mockImplementation(
+      () => instanceCommandGenerateConfig,
+    );
+
     jest.spyOn(console, 'log').mockImplementation();
 
     return {
       commands: new CommandController(),
       instanceCommandInstall,
       instanceCommandUpgrade,
+      instanceCommandGenerateConfig,
     };
   };
 
@@ -91,6 +102,17 @@ describe('CommandController class', () => {
       commands.run(argument);
 
       expect(console.log).toHaveBeenCalled();
+    });
+  });
+
+  describe('generate-config command', () => {
+    it('should run the command', () => {
+      const argument = 'generate-config';
+
+      const { commands, instanceCommandGenerateConfig } = setup();
+      commands.run(argument);
+
+      expect(instanceCommandGenerateConfig.run).toHaveBeenCalled();
     });
   });
 });

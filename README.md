@@ -63,7 +63,7 @@ Run the following command and answer the question prompts.
 npx oyster-package-generator init
 ```
 
-Please note if you plan on using Oyster a lot you should globally install it for speed purposes. `npx` can be quite slow since it doesn't cache.
+Please note if you plan on using Oyster a lot (or on [Windows 10](#windows-10-troubleshooting)) you should globally install it. `npx` can be quite slow since it doesn't cache.
 
 ```bash
 npm install -g oyster-package-generator
@@ -110,6 +110,7 @@ This package comes with a convenient feature to upgrade an older Oyster project 
 * Make sure all changes are checked in, this will delete files
 * After the process runs, check your Git diffs to make sure nothing was lost
 * If you're upgrading from Travis CI to GitHub Actions you'll need to provide a new `NPM_TOKEN` in your repo's [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets)
+* If you do not have a `.oyster.json` file (older projects), generate one with the [generate-config](#generating-a-config) command
 
 When ready, use this command to trigger the upgrade.
 
@@ -117,7 +118,15 @@ When ready, use this command to trigger the upgrade.
 npx oyster-package-generator upgrade
 ```
 
-#### GitHub Protected Branches
+#### Generating a config
+
+If you're on Oyster v1.X or v2.0, you'll need to generate a config file before running the `upgrade` command. Configs are new as of version `v2.1.0`. Generate a config file by running the following.
+
+```bash
+npx oyster-package-generator generate-config
+```
+
+### GitHub Protected Branches
 
 Due to a known bug with GitHub Action commits, it's not recommended to add special requirements to a `master` protected branch. You can still protect `master`, but special requirements will result in crashing the Semantic Release bot that auto deploys releases.
 
