@@ -90,11 +90,12 @@ export default class InstallQuestions {
   }
 
   private questionUnityVersion(): Question {
+    const example = chalk.blue('2019.1');
+
     return {
-      message: `Minimum Unity version?. No version indicates all versions of Unity`,
+      message: `Minimum Unity version?. No version indicates all versions of Unity. Example ${example}`,
       name: 'unityVersion',
       type: 'input',
-      default: '2019.1',
     };
   }
 
