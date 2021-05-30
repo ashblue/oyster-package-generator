@@ -180,7 +180,8 @@ describe('PackageBuilder class', () => {
         const replacements = Object.keys(results).map(
           (key) =>
             ({
-              value: results[key],
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              value: (results as any)[key] as string,
               key,
             } as IKeyValuePair),
         );

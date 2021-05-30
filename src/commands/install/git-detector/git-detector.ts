@@ -1,5 +1,4 @@
 export interface IGitDetails {
-  [key: string]: string;
   gitUrlNoHttp: string;
   gitUrl: string;
 }
@@ -9,7 +8,11 @@ export interface IRepoStatus {
   message: string;
 }
 
-export default class GitDetector {
+export interface IGitDetector {
+  getDetails(): Promise<IGitDetails>;
+}
+
+export default class GitDetector implements IGitDetector {
   private readonly _gitRemoteOriginUrl: () => Promise<string>;
 
   constructor(gitRemoteOriginUrl: () => Promise<string>) {
