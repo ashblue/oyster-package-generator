@@ -1,0 +1,7 @@
+{
+    "name": "{packageName}",
+    "references": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

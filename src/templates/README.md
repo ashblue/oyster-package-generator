@@ -18,7 +18,7 @@
     }
   ],
   "dependencies": {
-    "{name}": "1.0.0"
+    "{packageName}": "1.0.0"
   }
 }
 ```
@@ -34,7 +34,7 @@ To access nightly builds of the `develop` branch that are package manager friend
 ```json
 {
     "dependencies": {
-      "{name}": "{gitUrl}.git#nightly"
+      "{packageName}": "{gitUrl}.git#nightly"
     }
 }
 ```
@@ -63,7 +63,7 @@ npm run commit
 
 ### How To Contribute
 
-Please see the [CONTRIBUTIONS.md](./CONTRIBUTING.md) file for full details on how to contribute to this project.
+Please see the [CONTRIBUTIONS.md](CONTRIBUTING.md) file for full details on how to contribute to this project.
 
 ---
 
