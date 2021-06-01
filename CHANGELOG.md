@@ -1,3 +1,17 @@
+# [2.1.0](https://github.com/ashblue/oyster-package-generator/compare/v2.0.0...v2.1.0) (2021-06-01)
+
+
+### Bug Fixes
+
+* **init wizard:** leaving the Unity version blank now respects blank values ([95f185e](https://github.com/ashblue/oyster-package-generator/commit/95f185e37213f669976514d76a4c807d1aa6da4b))
+
+
+### Features
+
+* **cli:** oyster install moved to `oyster init` namespace ([02f6326](https://github.com/ashblue/oyster-package-generator/commit/02f6326c9a3592426a39488e47aec0bbd7d08c53))
+* **command:** `oyster generate-config` auto create a .oyster.json file for older projects ([c73874b](https://github.com/ashblue/oyster-package-generator/commit/c73874b7e138efd3906a8ea2946f246b83ba26ed))
+* **command upgrade:** `npx oyster-package-generator upgrade` can now be used to upgrade a project ([11ca4cf](https://github.com/ashblue/oyster-package-generator/commit/11ca4cf6858fd5bf2b76d89d3c657ce778667b9c))
+
 # [2.0.0](https://github.com/ashblue/oyster-package-generator/compare/v1.0.0...v2.0.0) (2021-04-10)
 
 
