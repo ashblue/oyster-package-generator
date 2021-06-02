@@ -44,7 +44,7 @@ If you want a step-by-step guide follow along below.
     1. Run `git init` to prep everything for Git
     2. Run `git remote add origin YOUR_REPO`. Replace `YOUR_REPO` with the proper repo URL (such as git@github.com:ashblue/oyster-package-generator.git). This needs to be done before oyster runs. Reason being it hard writes some Git addresses into your project
 3. Generate the Oyster package
-    1. Run `npx oyster-package-generator` and answer the prompts. Wait for the install script to finish. If you notice a bug on Windows 10 [see here](#windows-10-troubleshooting)
+    1. Run `npx oyster-package-generator init` and answer the prompts. Wait for the install script to finish. If you notice a bug on Windows 10 [see here](#windows-10-troubleshooting)
     2. Create your first commit with `npm run commit`. Choose "chore" and write "My first commit" for the body text
     3. Run `git push` to deploy the `master` branch (follow on-screen instructions if prompted)
     4. Use `git checkout -b develop` and then run `git push` to deploy it
