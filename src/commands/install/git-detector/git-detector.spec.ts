@@ -7,6 +7,7 @@ describe('GitDetector', () => {
         .fn()
         .mockImplementation(() => Promise.resolve());
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
       const result = await gitDetector.checkIfGitRepo();
 
@@ -18,6 +19,7 @@ describe('GitDetector', () => {
         .fn()
         .mockImplementation(() => Promise.reject());
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
       const result = await gitDetector.checkIfGitRepo();
 
@@ -29,6 +31,7 @@ describe('GitDetector', () => {
         .fn()
         .mockImplementation(() => Promise.reject('a'));
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
       const result = await gitDetector.checkIfGitRepo();
 
@@ -46,6 +49,7 @@ describe('GitDetector', () => {
         .fn()
         .mockImplementation(() => Promise.resolve(remote));
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
       const details = await gitDetector.getDetails();
 
@@ -61,6 +65,7 @@ describe('GitDetector', () => {
         .fn()
         .mockImplementation(() => Promise.resolve(remote));
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const gitDetector = new GitDetector(gitRemoteOriginUrl as any);
       const details = await gitDetector.getDetails();
 

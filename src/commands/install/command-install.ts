@@ -34,6 +34,7 @@ export default class CommandInstall {
 
   private runPackageBuilder() {
     const terminal = new InstallQuestions(inquirer);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const gitDetector = new GitDetector(gitRemoteOriginUrl);
     const configManager = new ConfigManager();
     const packageBuilder = new PackageBuilder(

@@ -49,6 +49,7 @@ describe('CommandUpgrade class', () => {
       generate: jest.fn(),
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     spySimpleGit.mockReturnValue({
       status: () => Promise.resolve({ isClean: () => !gitModifiedStatus }),
     } as any);

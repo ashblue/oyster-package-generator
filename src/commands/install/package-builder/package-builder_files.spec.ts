@@ -66,8 +66,11 @@ describe('PackageBuilder class', () => {
       _packageBuilder = new PackageBuilder(
         _copyFolder,
         _findPreExistingFiles,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         _terminal,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         _gitDetector,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         { generate: jest.fn() } as any,
       );
     });
@@ -88,7 +91,7 @@ describe('PackageBuilder class', () => {
 
         it('should add a replace variable to copyFolder for packageScope', () => {
           const match = findVariableMatch(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
             _copyFolder.mock.calls[0][2].replaceVariables,
             'packageScope',
             'com.a',
@@ -99,7 +102,7 @@ describe('PackageBuilder class', () => {
 
         it('should add a replace variable to copyFolder for .gitignore', () => {
           const match = findVariableMatch(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
             _copyFolder.mock.calls[0][2].replaceVariables,
             'gitignore',
             '.gitignore',
@@ -110,7 +113,7 @@ describe('PackageBuilder class', () => {
 
         it('should add a replace variable to copyFolder for year', () => {
           const match = findVariableMatch(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
             _copyFolder.mock.calls[0][2].replaceVariables,
             'year',
             new Date().getFullYear().toString(),
@@ -146,7 +149,7 @@ describe('PackageBuilder class', () => {
         await _packageBuilder.build(SOURCE, DESTINATION);
 
         const matchA = findVariableMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _copyFolder.mock.calls[0][2].replaceVariables,
           'packageName',
           name,
@@ -155,7 +158,7 @@ describe('PackageBuilder class', () => {
         expect(matchA).not.toBeUndefined();
 
         const matchB = findVariableMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _copyFolder.mock.calls[0][2].replaceVariables,
           replaceVariables[0].key,
           replaceVariables[0].value,
@@ -188,7 +191,7 @@ describe('PackageBuilder class', () => {
 
         replacements.forEach((replace) => {
           const match = findVariableMatch(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
             _copyFolder.mock.calls[0][2].replaceVariables,
             replace.key,
             replace.value,
