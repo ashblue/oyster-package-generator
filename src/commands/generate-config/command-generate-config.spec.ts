@@ -40,7 +40,9 @@ describe('CommandGenerateConfig class', () => {
       throw new Error(`Unknown path queried: ${filePath}`);
     });
 
-    spyOn(console, 'log');
+    jest.spyOn(console, 'log').mockImplementation(() => {
+      null;
+    });
 
     const configManager: IConfigManager = {
       generate: jest.fn(),

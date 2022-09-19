@@ -25,8 +25,10 @@ describe('Config class', () => {
       ...options,
     };
 
-    spyOn(path, 'resolve').and.returnValue(packageJsonPath);
-    spyOn(fs, 'readFileSync').and.returnValue(packageJsonContents);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    jest.spyOn(path, 'resolve').mockReturnValue(packageJsonPath as any);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    jest.spyOn(fs, 'readFileSync').mockReturnValue(packageJsonContents as any);
 
     return {
       config: new Config(configRaw as IConfigRaw),

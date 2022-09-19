@@ -1,6 +1,6 @@
 import path from 'path';
 import chalk from 'chalk';
-import * as inquirer from 'inquirer';
+import inquirer from 'inquirer';
 import { exec } from 'shelljs';
 import ConfigManager from '../shared/config/manager/config-manager';
 import {
@@ -34,6 +34,7 @@ export default class CommandInstall {
 
   private runPackageBuilder() {
     const terminal = new InstallQuestions(inquirer);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const gitDetector = new GitDetector(gitRemoteOriginUrl);
     const configManager = new ConfigManager();
     const packageBuilder = new PackageBuilder(

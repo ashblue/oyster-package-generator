@@ -8,6 +8,7 @@ import GitDetector from './git-detector/git-detector';
 import PackageBuilder from './package-builder/package-builder';
 
 jest.spyOn(console, 'log').mockImplementation();
+jest.mock('inquirer', () => ({}));
 
 jest.mock('shelljs', () => ({
   exec: jest.fn(),
