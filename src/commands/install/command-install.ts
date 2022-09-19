@@ -1,6 +1,6 @@
 import path from 'path';
 import chalk from 'chalk';
-import * as inquirer from 'inquirer';
+import inquirer from 'inquirer';
 import { exec } from 'shelljs';
 import ConfigManager from '../shared/config/manager/config-manager';
 import {
