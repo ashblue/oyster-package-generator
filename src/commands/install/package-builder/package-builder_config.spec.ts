@@ -72,8 +72,11 @@ describe('PackageBuilder class', () => {
       packageBuilder: new PackageBuilder(
         copyFolder,
         findPreExistingFiles,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         installQuestions,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         gitDetector,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         config as any,
       ),
     };

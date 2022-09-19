@@ -41,6 +41,7 @@ export default class InstallQuestions {
       this.questionKeywords(),
     ]);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     answers.keywords = this.keywordsToJsonStringArray(answers.keywords);
 
     return answers as IQuestionsToAnswers;
@@ -65,6 +66,7 @@ export default class InstallQuestions {
       message: `Package name? Internal ID that's permanent. Example ${packageNameFormat} or ${packageNameExample}`,
       name: 'name',
       type: 'input',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       validate: (value) => InstallQuestions.requiredString(value),
     };
   }
@@ -78,6 +80,7 @@ export default class InstallQuestions {
       message: `Package display name? Should be user-friendly. Example ${example} or ${exampleAlt}`,
       name: 'displayName',
       type: 'input',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       validate: (value) => InstallQuestions.requiredString(value),
     };
   }

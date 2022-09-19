@@ -25,7 +25,9 @@ describe('Config class', () => {
       ...options,
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     jest.spyOn(path, 'resolve').mockReturnValue(packageJsonPath as any);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     jest.spyOn(fs, 'readFileSync').mockReturnValue(packageJsonContents as any);
 
     return {

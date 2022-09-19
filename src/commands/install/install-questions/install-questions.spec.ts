@@ -68,7 +68,7 @@ describe('InstallQuestions class', () => {
         await terminal.askName();
 
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'name',
           'input',
@@ -86,7 +86,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for the display name', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'displayName',
           'input',
@@ -97,7 +97,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for the description', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'description',
           'input',
@@ -108,7 +108,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for the unity version', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'unityVersion',
           'input',
@@ -119,7 +119,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for the author name', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'authorName',
           'input',
@@ -130,7 +130,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for the author email', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'authorEmail',
           'input',
@@ -141,7 +141,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for the author url', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'authorUrl',
           'input',
@@ -152,7 +152,7 @@ describe('InstallQuestions class', () => {
 
       it('should ask for keywords', () => {
         const match = findQuestionMatch(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           _inquirerStub.prompt.mock.calls[0][0],
           'keywords',
           'input',
