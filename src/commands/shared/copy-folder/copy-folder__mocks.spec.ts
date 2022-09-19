@@ -34,6 +34,7 @@ describe('copyFolder helpers', () => {
       };
 
       jest.spyOn(glob, 'sync').mockReturnValue([]);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       jest.spyOn(fs, 'statSync').mockReturnValue({
         isFile: () => isFile,
         isDirectory: () => !isFile,
