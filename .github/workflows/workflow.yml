@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm ci --only=production --ignore-scripts
+      - run: HUSKY=0 npm ci
       - run: npm run lint
       - run: npm run test:coverage
       - run: npm run build
