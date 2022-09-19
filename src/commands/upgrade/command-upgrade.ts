@@ -1,7 +1,7 @@
 import path from 'path';
 import del from 'del';
 import chalk from 'chalk';
-import { Repository } from 'nodegit';
+import { simpleGit } from 'simple-git';
 import { exec } from 'shelljs';
 import { IConfigManager } from '../shared/config/manager/config-manager';
 import IConfig from '../shared/config/i-config';
@@ -64,10 +64,9 @@ export default class CommandUpgrade {
   }
 
   private async getIsRepoModified() {
-    const repo = await Repository.open('.git');
-    const status = await repo.getStatus();
+    const status = await simpleGit().status();
 
-    return status.length > 0;
+    return !status.isClean();
   }
 
   private getConfig() {

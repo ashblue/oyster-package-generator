@@ -4,7 +4,9 @@ import CommandInstall from './install/command-install';
 import CommandUpgrade from './upgrade/command-upgrade';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-jest.mock('nodegit', () => {});
+jest.mock('simple-git', () => {});
+
+jest.mock('inquirer', () => ({}));
 
 jest.mock('./install/command-install');
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

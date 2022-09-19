@@ -1,4 +1,8 @@
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: "node",
+  
   clearMocks: true,
   modulePathIgnorePatterns: [
     'src/templates',
@@ -19,11 +23,7 @@ module.exports = {
     "js",
     "ts",
   ],
-  testEnvironment: "node",
   testMatch: [
     "**/*.spec.ts",
   ],
-  transform: {
-    '\\.ts$': 'ts-jest',
-  },
 };

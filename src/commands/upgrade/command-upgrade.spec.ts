@@ -1,7 +1,7 @@
 import path from 'path';
 import del from 'del';
 import chalk from 'chalk';
-import * as nodegit from 'nodegit';
+import * as simpleGit from 'simple-git';
 import IConfig from '../shared/config/i-config';
 import IConfigRaw from '../shared/config/i-config-raw';
 import { IKeyValuePair } from '../shared/copy-folder/copy-folder';
@@ -10,7 +10,6 @@ import * as replacementVariables from '../shared/replacement-variables/replaceme
 import * as copyFileUtil from '../shared/copy-folder/copy-folder';
 import { A } from '../../utils/builders/a';
 import CommandUpgrade from './command-upgrade';
-import Mock = jest.Mock;
 import * as shelljs from 'shelljs';
 
 jest.mock('del');
@@ -22,14 +21,8 @@ jest.mock('shelljs', () => ({
   exec: jest.fn(),
 }));
 
-jest.mock('nodegit', () => ({
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  Repository: {
-    open: jest.fn(),
-  },
-}));
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/naming-convention
-const mockNodegit: { Repository: { open: Mock } } = nodegit as any;
+jest.mock('simple-git');
+const spySimpleGit = jest.spyOn(simpleGit, 'simpleGit');
 
 describe('CommandUpgrade class', () => {
   interface IOptions {
@@ -56,17 +49,14 @@ describe('CommandUpgrade class', () => {
       generate: jest.fn(),
     };
 
-    mockNodegit.Repository.open.mockImplementation(() => {
-      const changes: any[] = [];
-      if (gitModifiedStatus) changes.push({});
+    spySimpleGit.mockReturnValue({
+      status: () => Promise.resolve({ isClean: () => !gitModifiedStatus }),
+    } as any);
 
-      return Promise.resolve({
-        getStatus: () => Promise.resolve(changes),
-      });
+    jest.spyOn(console, 'error').mockImplementation(() => {
+      null;
     });
-
-    spyOn(console, 'error').and.callFake(() => null);
-    spyOn(console, 'log').and.callFake(() => null);
+    jest.spyOn(console, 'log').mockImplementation(() => null);
 
     return {
       config,
@@ -177,10 +167,9 @@ describe('CommandUpgrade class', () => {
           '.gitignore',
         ];
 
-        spyOn(
-          replacementVariables,
-          'getReplacementKeyValuePairs',
-        ).and.returnValue(replaceVariables);
+        jest
+          .spyOn(replacementVariables, 'getReplacementKeyValuePairs')
+          .mockReturnValue(replaceVariables);
 
         const { upgrade } = setup();
         await upgrade.run();
