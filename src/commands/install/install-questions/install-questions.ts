@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Inquirer, Question } from 'inquirer';
+import { Question, PromptModule } from 'inquirer';
 
 export interface IQuestionsToAnswers {
   authorEmail: string;
@@ -12,10 +12,12 @@ export interface IQuestionsToAnswers {
 }
 
 export default class InstallQuestions {
-  private _inquirer: Inquirer;
+  private _inquirer: PromptModule;
 
-  constructor(inquirer: Inquirer) {
-    this._inquirer = inquirer;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+  constructor(inquirerRef: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    this._inquirer = inquirerRef.prompt;
   }
 
   public static requiredString(value: string): boolean {
@@ -23,13 +25,13 @@ export default class InstallQuestions {
   }
 
   public async askName(): Promise<string> {
-    const question = await this._inquirer.prompt([this.questionName()]);
+    const question = await this._inquirer([this.questionName()]);
 
     return question.name as string;
   }
 
   public async askQuestions(): Promise<IQuestionsToAnswers> {
-    const answers = await this._inquirer.prompt([
+    const answers = await this._inquirer([
       this.questionDisplayName(),
       this.questionDescription(),
       this.questionUnityVersion(),
