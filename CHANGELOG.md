@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/ashblue/oyster-package-generator/compare/v3.0.0...v3.0.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* restore template Husky hooks ([d758a5a](https://github.com/ashblue/oyster-package-generator/commit/d758a5af22a6b9fae7a7adb5d47bfe8e6ea6efb1))
+
 # [3.0.0](https://github.com/ashblue/oyster-package-generator/compare/v2.1.0...v3.0.0) (2022-09-19)
 
 
