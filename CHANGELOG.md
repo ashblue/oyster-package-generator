@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/ashblue/oyster-package-generator/compare/v3.0.1...v3.0.2) (2023-07-06)
+
+
+### Bug Fixes
+
+* **github-actions:** release files now work without crashing ([cb32fc6](https://github.com/ashblue/oyster-package-generator/commit/cb32fc668bdca449a24dd0cada7e926dda9a2652))
+
 ## [3.0.1](https://github.com/ashblue/oyster-package-generator/compare/v3.0.0...v3.0.1) (2023-05-17)
 
 
