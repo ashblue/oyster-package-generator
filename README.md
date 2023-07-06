@@ -142,9 +142,23 @@ https://trello.com/b/Z9P0XMl6/oyster-package-generator
 
 ## Setting up cloud builds
 
+Follow the guide below to setup your tokens for automatic cloud deploys.
+
+### NPM Token
+
 To get builds automatically deploying you'll need an NPM token. To get one we'll have to [generate an authentication key](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) and choose the "Automation" token type. You must have an [npm](https://www.npmjs.com) account to generate a token. 
 
 Add the key to your repo [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) as `NPM_TOKEN`.
+
+Next we'll setup a GitHub token with admin privileges.
+
+### GitHug Token
+
+Next you'll need to setup a GitHub token. While GitHub does provide a token by default to repos. We can't really use it here. Reason being branch protection privileges will stop important automatic updates when you try to release. Causing the release to fail.
+
+First navigate to the personal access token menu by following these [instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). Check the repo box for permissions then create the token.
+
+Add the key to your repo [secrets](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) as `GH_TOKEN`.
 
 ## Development Environment
 
